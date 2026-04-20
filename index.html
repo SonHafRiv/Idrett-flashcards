@@ -647,6 +647,7 @@
       document.getElementById('card-chapter').textContent = card.chapter.toUpperCase();
       document.getElementById('card-number').textContent = `${currentIndex + 1} / ${currentDeck.length}`;
       document.getElementById('card').classList.remove('flipped');
+      document.getElementById('card-front').classList.remove('hidden');
       document.getElementById('card-back').classList.add('hidden');
       document.getElementById('hint').classList.remove('hidden');
       isFlipped = false;
