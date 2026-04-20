@@ -4,511 +4,845 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Idrett og Samfunn – Flashkort</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg: #f7f7f7;
+      --surface: #ffffff;
+      --ink: #3c3c3c;
+      --ink-soft: #777;
+      --border: #e5e5e5;
+      --border-strong: #afafaf;
+      --green: #58cc02;
+      --green-dark: #58a700;
+      --green-soft: #d7ffb8;
+      --red: #ff4b4b;
+      --red-dark: #ea2b2b;
+      --red-soft: #ffdfe0;
+      --yellow: #ffc800;
+      --yellow-dark: #e6b400;
+      --blue: #1cb0f6;
+      --blue-dark: #1899d6;
+      --purple: #ce82ff;
+      --purple-dark: #a560e8;
+      --gold: #ffc800;
+    }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #1e1e2e 0%, #0f0f1e 100%);
-      color: #e0e0e0;
+      font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
       min-height: 100vh;
       padding: 16px;
+      font-weight: 600;
     }
-    .container { max-width: 900px; margin: 0 auto; }
+    .container { max-width: 760px; margin: 0 auto; }
 
-    header {
-      text-align: center;
-      margin-bottom: 24px;
+    header { margin-bottom: 20px; }
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
     }
-    h1 { font-size: 28px; margin-bottom: 8px; color: #61dafb; }
+    h1 {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--ink);
+      letter-spacing: -0.5px;
+    }
+    .xp-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #fff3cd;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-weight: 800;
+      color: #c88a04;
+      font-size: 14px;
+      border: 2px solid #ffe58a;
+    }
     .stats {
       display: flex;
-      gap: 16px;
-      justify-content: center;
-      flex-wrap: wrap;
-      font-size: 14px;
-      color: #888;
-      margin-bottom: 12px;
+      gap: 12px;
+      font-size: 13px;
+      color: var(--ink-soft);
+      margin-bottom: 10px;
+      font-weight: 700;
     }
     .progress-bar {
       width: 100%;
-      height: 6px;
-      background: #333;
-      border-radius: 3px;
+      height: 14px;
+      background: var(--border);
+      border-radius: 20px;
       overflow: hidden;
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #61dafb, #39ff14);
+      background: var(--green);
+      border-radius: 20px;
+      position: relative;
       transition: width 0.3s;
     }
-
-    .chapter-filter {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 24px;
-      justify-content: center;
-    }
-    .chip {
-      padding: 8px 14px;
-      border: 2px solid #333;
-      background: transparent;
-      color: #e0e0e0;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 13px;
-      transition: all 0.2s;
-      white-space: nowrap;
-    }
-    .chip:hover { border-color: #61dafb; }
-    .chip.active {
-      background: #61dafb;
-      color: #0f0f1e;
-      border-color: #61dafb;
-    }
-
-    .flashcard-container {
-      perspective: 1000px;
-      margin-bottom: 32px;
-    }
-    .flashcard {
-      width: 100%;
-      min-height: 280px;
-      background: linear-gradient(135deg, #2d2d3d, #1a1a2e);
-      border: 2px solid #39ff14;
-      border-radius: 12px;
-      padding: 32px;
-      cursor: pointer;
-      transition: transform 0.3s;
-      transform-style: preserve-3d;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      position: relative;
-      box-shadow: 0 8px 32px rgba(57, 255, 20, 0.15);
-    }
-    .flashcard:hover { transform: scale(1.01); }
-    .flashcard.flipped {
-      border-color: #61dafb;
-      box-shadow: 0 8px 32px rgba(97, 218, 251, 0.15);
-    }
-
-    .card-label {
+    .progress-fill::after {
+      content: '';
       position: absolute;
-      top: 12px;
-      left: 16px;
-      font-size: 11px;
-      color: #888;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    .card-number {
-      position: absolute;
-      top: 12px;
-      right: 16px;
-      font-size: 12px;
-      color: #666;
+      top: 3px; left: 8px; right: 8px;
+      height: 3px;
+      background: rgba(255,255,255,0.4);
+      border-radius: 2px;
     }
 
-    .card-front { font-size: 20px; font-weight: 500; color: #39ff14; }
-    .card-back { font-size: 16px; line-height: 1.6; color: #e0e0e0; }
-    .card-back strong { color: #61dafb; }
-
-    .hint {
-      position: absolute;
-      bottom: 12px;
-      right: 16px;
-      font-size: 12px;
-      color: #666;
-      font-style: italic;
-    }
-
-    .controls {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      margin-bottom: 32px;
-      flex-wrap: wrap;
-    }
-    button {
-      padding: 12px 24px;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .btn-yes {
-      background: linear-gradient(135deg, #39ff14, #32cd32);
-      color: #0f0f1e;
-    }
-    .btn-yes:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(57, 255, 20, 0.4); }
-    .btn-no {
-      background: linear-gradient(135deg, #ff4757, #ff6b6b);
-      color: white;
-    }
-    .btn-no:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255, 71, 87, 0.4); }
-    .btn-skip {
-      background: #333;
-      color: #e0e0e0;
-    }
-    .btn-skip:hover { background: #444; }
-
-    .finish-screen {
-      text-align: center;
-      padding: 48px 24px;
-    }
-    .finish-screen h2 {
-      font-size: 32px;
-      margin-bottom: 24px;
-      color: #39ff14;
-    }
-    .finish-stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 32px;
-      max-width: 400px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .stat-box {
-      background: #2d2d3d;
-      padding: 20px;
-      border-radius: 8px;
-      border-left: 4px solid #39ff14;
-    }
-    .stat-box.red { border-left-color: #ff4757; }
-    .stat-number {
-      font-size: 28px;
-      font-weight: bold;
-      color: #39ff14;
-      margin-bottom: 4px;
-    }
-    .stat-box.red .stat-number { color: #ff4757; }
-    .stat-label {
-      font-size: 13px;
-      color: #888;
-      text-transform: uppercase;
-    }
-
+    /* === MODE SWITCHER (tabs) === */
     .mode-switcher {
       display: flex;
       gap: 8px;
-      justify-content: center;
       margin-bottom: 20px;
+      background: var(--surface);
+      padding: 6px;
+      border-radius: 14px;
+      border: 2px solid var(--border);
     }
     .mode-btn {
-      padding: 10px 24px;
-      border: 2px solid #333;
+      flex: 1;
+      padding: 10px 8px;
       background: transparent;
-      color: #e0e0e0;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 600;
-      transition: all 0.2s;
-    }
-    .mode-btn:hover { border-color: #61dafb; }
-    .mode-btn.active {
-      background: linear-gradient(135deg, #61dafb, #39ff14);
-      color: #0f0f1e;
-      border-color: transparent;
-    }
-
-    .quiz-question-box {
-      background: linear-gradient(135deg, #2d2d3d, #1a1a2e);
-      border: 2px solid #61dafb;
-      border-radius: 12px;
-      padding: 28px;
-      margin-bottom: 20px;
-      box-shadow: 0 8px 32px rgba(97, 218, 251, 0.15);
-    }
-    .quiz-q-label {
-      font-size: 11px;
-      color: #888;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-    }
-    .quiz-q-text {
-      font-size: 20px;
-      font-weight: 500;
-      color: #39ff14;
-      line-height: 1.4;
-    }
-    .quiz-textarea {
-      width: 100%;
-      min-height: 120px;
-      background: #1a1a2e;
-      border: 2px solid #333;
-      border-radius: 8px;
-      padding: 16px;
-      color: #e0e0e0;
-      font-size: 15px;
-      font-family: inherit;
-      resize: vertical;
-      margin-bottom: 16px;
-      line-height: 1.5;
-    }
-    .quiz-textarea:focus {
-      outline: none;
-      border-color: #61dafb;
-    }
-    .quiz-reveal {
-      background: #2d2d3d;
-      border-left: 4px solid #39ff14;
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-    .quiz-reveal-label {
-      font-size: 11px;
-      color: #888;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 10px;
-    }
-    .quiz-reveal-text { font-size: 15px; line-height: 1.6; color: #e0e0e0; }
-    .quiz-reveal-text strong { color: #61dafb; }
-    .quiz-user-answer {
-      background: #1a1a2e;
-      border-left: 4px solid #888;
-      border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 16px;
-      font-size: 14px;
-      color: #ccc;
-      white-space: pre-wrap;
-      font-style: italic;
-    }
-    .quiz-grade-buttons {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-    .btn-grade {
-      padding: 14px 12px;
+      color: var(--ink-soft);
       border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 700;
+      border-radius: 10px;
       cursor: pointer;
-      transition: all 0.2s;
-    }
-    .btn-grade-full {
-      background: linear-gradient(135deg, #39ff14, #32cd32);
-      color: #0f0f1e;
-    }
-    .btn-grade-half {
-      background: linear-gradient(135deg, #ffc107, #ff9800);
-      color: #0f0f1e;
-    }
-    .btn-grade-zero {
-      background: linear-gradient(135deg, #ff4757, #ff6b6b);
-      color: white;
-    }
-    .btn-grade:hover { transform: translateY(-2px); }
-
-    .quiz-score-big {
-      font-size: 64px;
-      font-weight: 900;
-      background: linear-gradient(135deg, #61dafb, #39ff14);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      text-align: center;
-      margin: 16px 0 8px;
-    }
-    .quiz-score-total {
-      text-align: center;
-      font-size: 18px;
-      color: #888;
-      margin-bottom: 32px;
-    }
-    .quiz-review {
-      text-align: left;
-      max-width: 700px;
-      margin: 0 auto 24px;
-    }
-    .quiz-review-item {
-      background: #2d2d3d;
-      border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 12px;
-      border-left: 4px solid #39ff14;
-    }
-    .quiz-review-item.half { border-left-color: #ffc107; }
-    .quiz-review-item.zero { border-left-color: #ff4757; }
-    .quiz-review-q {
-      font-weight: 600;
-      color: #61dafb;
-      margin-bottom: 8px;
-      font-size: 14px;
-    }
-    .quiz-review-a { font-size: 13px; color: #ccc; line-height: 1.5; }
-    .quiz-review-a strong { color: #61dafb; }
-    .quiz-review-user {
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px dashed #444;
       font-size: 13px;
-      color: #999;
-      font-style: italic;
+      font-weight: 800;
+      font-family: inherit;
+      transition: all 0.15s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .mode-btn:hover { background: var(--border); color: var(--ink); }
+    .mode-btn.active {
+      background: var(--green);
+      color: white;
+      box-shadow: 0 2px 0 var(--green-dark);
     }
 
-    .status-filter {
+    /* === CHIPS (chapter + status filter) === */
+    .chapter-filter, .status-filter {
       display: flex;
       gap: 6px;
       flex-wrap: wrap;
       margin-bottom: 14px;
       justify-content: center;
     }
-    .status-chip {
-      padding: 6px 12px;
-      border: 2px solid #333;
-      background: transparent;
-      color: #bbb;
-      border-radius: 16px;
+    .chip, .status-chip {
+      padding: 6px 14px;
+      border: 2px solid var(--border);
+      background: var(--surface);
+      color: var(--ink-soft);
+      border-radius: 20px;
       cursor: pointer;
       font-size: 12px;
-      transition: all 0.2s;
+      font-weight: 800;
+      font-family: inherit;
+      transition: all 0.15s;
+      white-space: nowrap;
     }
-    .status-chip:hover { border-color: #61dafb; }
-    .status-chip.active { background: #2d2d3d; color: #fff; }
-    .status-chip.active[data-status="alle"] { border-color: #61dafb; }
-    .status-chip.active[data-status="kan"] { border-color: #39ff14; color: #39ff14; }
-    .status-chip.active[data-status="kan-ikke"] { border-color: #ff4757; color: #ff4757; }
-    .status-chip.active[data-status="hoppet"] { border-color: #ffa502; color: #ffa502; }
-    .status-chip.active[data-status="ikke-svart"] { border-color: #888; color: #ccc; }
+    .chip:hover, .status-chip:hover { border-color: var(--blue); color: var(--blue); }
+    .chip.active { background: var(--blue); color: white; border-color: var(--blue); }
+    .status-chip.active[data-status="alle"]     { background: var(--blue); color: white; border-color: var(--blue); }
+    .status-chip.active[data-status="kan"]      { background: var(--green); color: white; border-color: var(--green); }
+    .status-chip.active[data-status="kan-ikke"] { background: var(--red); color: white; border-color: var(--red); }
+    .status-chip.active[data-status="hoppet"]   { background: var(--yellow); color: #8a6800; border-color: var(--yellow); }
+    .status-chip.active[data-status="ikke-svart"]{ background: #888; color: white; border-color: #888; }
 
     .overview-btn {
       display: block;
       margin: 0 auto 20px;
-      background: transparent;
-      color: #61dafb;
-      border: 2px solid #61dafb;
-      padding: 8px 18px;
-      border-radius: 8px;
+      background: var(--surface);
+      color: var(--blue);
+      border: 2px solid var(--border);
+      border-bottom: 4px solid var(--border);
+      padding: 10px 18px;
+      border-radius: 12px;
       font-size: 13px;
+      font-weight: 800;
+      font-family: inherit;
       cursor: pointer;
-      text-transform: none;
-      letter-spacing: 0;
     }
-    .overview-btn:hover { background: rgba(97, 218, 251, 0.1); }
+    .overview-btn:hover { border-color: var(--blue); color: var(--blue); }
 
-    #overview-screen h2 { text-align: center; color: #61dafb; margin-bottom: 16px; }
+    /* === FLASHCARD === */
+    .flashcard-container { margin-bottom: 24px; }
+    .flashcard {
+      width: 100%;
+      min-height: 240px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-bottom: 4px solid var(--border);
+      border-radius: 18px;
+      padding: 48px 28px 28px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      transition: transform 0.15s, border-color 0.2s;
+    }
+    .flashcard:hover { transform: translateY(-2px); border-color: var(--blue); }
+    .flashcard.flipped { border-color: var(--green); }
+    .card-label {
+      position: absolute;
+      top: 14px; left: 18px;
+      font-size: 11px;
+      color: var(--ink-soft);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .card-number {
+      position: absolute;
+      top: 14px; right: 18px;
+      font-size: 12px;
+      color: var(--ink-soft);
+      font-weight: 700;
+    }
+    .card-front { font-size: 22px; font-weight: 800; color: var(--ink); line-height: 1.3; }
+    .card-back { font-size: 16px; line-height: 1.55; color: var(--ink); font-weight: 600; }
+    .card-back strong { color: var(--green-dark); font-weight: 800; }
+    .hint {
+      position: absolute;
+      bottom: 12px; right: 18px;
+      font-size: 11px;
+      color: var(--ink-soft);
+      font-style: italic;
+      font-weight: 700;
+    }
+
+    /* === BUTTONS (3D Duolingo style) === */
+    .controls {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+    button { font-family: inherit; }
+    .btn-duo {
+      padding: 13px 20px;
+      border: none;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 800;
+      font-family: inherit;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      transition: filter 0.1s, transform 0.05s;
+      position: relative;
+    }
+    .btn-duo:active { transform: translateY(2px); }
+    .btn-duo:active::after { display: none; }
+
+    .btn-yes {
+      background: var(--green);
+      color: white;
+      box-shadow: 0 4px 0 var(--green-dark);
+    }
+    .btn-yes:hover { filter: brightness(1.05); }
+    .btn-yes:active { box-shadow: 0 2px 0 var(--green-dark); }
+
+    .btn-no {
+      background: var(--red);
+      color: white;
+      box-shadow: 0 4px 0 var(--red-dark);
+    }
+    .btn-no:hover { filter: brightness(1.05); }
+    .btn-no:active { box-shadow: 0 2px 0 var(--red-dark); }
+
+    .btn-skip {
+      background: var(--surface);
+      color: var(--ink-soft);
+      box-shadow: 0 4px 0 var(--border);
+      border: 2px solid var(--border);
+    }
+    .btn-skip:hover { color: var(--ink); }
+    .btn-skip:active { box-shadow: 0 2px 0 var(--border); }
+
+    .btn-blue {
+      background: var(--blue);
+      color: white;
+      box-shadow: 0 4px 0 var(--blue-dark);
+    }
+    .btn-blue:hover { filter: brightness(1.05); }
+    .btn-blue:active { box-shadow: 0 2px 0 var(--blue-dark); }
+
+    .btn-purple {
+      background: var(--purple);
+      color: white;
+      box-shadow: 0 4px 0 var(--purple-dark);
+    }
+    .btn-purple:hover { filter: brightness(1.05); }
+    .btn-purple:active { box-shadow: 0 2px 0 var(--purple-dark); }
+
+    /* === FINISH SCREEN === */
+    .finish-screen { text-align: center; padding: 32px 16px; }
+    .finish-screen h2 {
+      font-size: 28px;
+      font-weight: 900;
+      margin-bottom: 20px;
+      color: var(--green-dark);
+    }
+    .finish-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 0 auto 28px;
+      max-width: 440px;
+    }
+    .stat-box {
+      background: var(--surface);
+      padding: 20px;
+      border-radius: 14px;
+      border: 2px solid var(--green);
+      border-bottom: 4px solid var(--green);
+    }
+    .stat-box.red { border-color: var(--red); }
+    .stat-number {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--green-dark);
+      margin-bottom: 4px;
+    }
+    .stat-box.red .stat-number { color: var(--red-dark); }
+    .stat-label {
+      font-size: 12px;
+      color: var(--ink-soft);
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+    }
+
+    /* === QUIZ === */
+    .quiz-question-box {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-bottom: 4px solid var(--border);
+      border-radius: 18px;
+      padding: 22px 20px;
+      margin-bottom: 18px;
+    }
+    .quiz-q-label {
+      font-size: 11px;
+      color: var(--ink-soft);
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+    .quiz-q-text { font-size: 19px; font-weight: 800; color: var(--ink); line-height: 1.35; }
+    .quiz-textarea {
+      width: 100%;
+      min-height: 120px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+      color: var(--ink);
+      font-size: 15px;
+      font-family: inherit;
+      font-weight: 600;
+      resize: vertical;
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+    .quiz-textarea:focus { outline: none; border-color: var(--blue); }
+    .quiz-reveal {
+      background: #eaffd7;
+      border: 2px solid var(--green);
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+    .quiz-reveal-label {
+      font-size: 11px;
+      color: var(--green-dark);
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .quiz-reveal-text { font-size: 15px; line-height: 1.55; color: var(--ink); font-weight: 600; }
+    .quiz-reveal-text strong { color: var(--green-dark); font-weight: 800; }
+    .quiz-user-answer {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 14px;
+      font-size: 14px;
+      color: var(--ink-soft);
+      white-space: pre-wrap;
+      font-style: italic;
+    }
+    .quiz-grade-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .btn-grade {
+      padding: 14px 8px;
+      border: none;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      font-family: inherit;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: transform 0.05s;
+    }
+    .btn-grade:active { transform: translateY(2px); }
+    .btn-grade-full  { background: var(--green); color: white; box-shadow: 0 4px 0 var(--green-dark); }
+    .btn-grade-half  { background: var(--yellow); color: #8a6800; box-shadow: 0 4px 0 var(--yellow-dark); }
+    .btn-grade-zero  { background: var(--red); color: white; box-shadow: 0 4px 0 var(--red-dark); }
+    .btn-grade-full:active  { box-shadow: 0 2px 0 var(--green-dark); }
+    .btn-grade-half:active  { box-shadow: 0 2px 0 var(--yellow-dark); }
+    .btn-grade-zero:active  { box-shadow: 0 2px 0 var(--red-dark); }
+
+    .quiz-score-big {
+      font-size: 72px;
+      font-weight: 900;
+      color: var(--green-dark);
+      text-align: center;
+      margin: 12px 0 4px;
+    }
+    .quiz-score-total {
+      text-align: center;
+      font-size: 16px;
+      color: var(--ink-soft);
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+    .quiz-review { text-align: left; max-width: 700px; margin: 0 auto 20px; }
+    .quiz-review-item {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      border: 2px solid var(--green);
+      border-left-width: 6px;
+    }
+    .quiz-review-item.half { border-color: var(--yellow); }
+    .quiz-review-item.zero { border-color: var(--red); }
+    .quiz-review-q { font-weight: 800; color: var(--ink); margin-bottom: 6px; font-size: 14px; }
+    .quiz-review-a { font-size: 13px; color: var(--ink-soft); line-height: 1.5; font-weight: 600; }
+    .quiz-review-a strong { color: var(--green-dark); font-weight: 800; }
+    .quiz-review-user {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--border);
+      font-size: 13px;
+      color: var(--ink-soft);
+      font-style: italic;
+    }
+
+    /* === OVERVIEW === */
+    #overview-screen h2 { text-align: center; color: var(--ink); margin-bottom: 16px; font-weight: 900; }
     .overview-summary {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-bottom: 24px;
+      gap: 8px;
+      margin-bottom: 20px;
     }
     .overview-summary-box {
-      background: #2d2d3d;
-      padding: 14px 10px;
-      border-radius: 8px;
+      background: var(--surface);
+      padding: 12px 8px;
+      border-radius: 12px;
       text-align: center;
-      border-top: 3px solid #888;
+      border: 2px solid var(--border);
+      border-top-width: 5px;
     }
-    .overview-summary-box.kan { border-top-color: #39ff14; }
-    .overview-summary-box.kan-ikke { border-top-color: #ff4757; }
-    .overview-summary-box.hoppet { border-top-color: #ffa502; }
+    .overview-summary-box.kan      { border-top-color: var(--green); }
+    .overview-summary-box.kan-ikke { border-top-color: var(--red); }
+    .overview-summary-box.hoppet   { border-top-color: var(--yellow); }
     .overview-summary-box.ikke-svart { border-top-color: #888; }
-    .overview-summary-num { font-size: 22px; font-weight: bold; color: #fff; }
-    .overview-summary-label { font-size: 11px; color: #aaa; text-transform: uppercase; margin-top: 2px; }
+    .overview-summary-num { font-size: 22px; font-weight: 900; color: var(--ink); }
+    .overview-summary-label { font-size: 10px; color: var(--ink-soft); text-transform: uppercase; margin-top: 2px; font-weight: 800; }
 
     .overview-group-title {
-      font-size: 15px;
-      font-weight: 600;
-      margin: 20px 0 10px;
+      font-size: 14px;
+      font-weight: 800;
+      margin: 18px 0 8px;
       padding: 8px 12px;
-      border-radius: 6px;
+      border-radius: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
-    .overview-group-title.kan { background: rgba(57, 255, 20, 0.12); color: #39ff14; }
-    .overview-group-title.kan-ikke { background: rgba(255, 71, 87, 0.12); color: #ff4757; }
-    .overview-group-title.hoppet { background: rgba(255, 165, 2, 0.12); color: #ffa502; }
-    .overview-group-title.ikke-svart { background: rgba(136, 136, 136, 0.12); color: #bbb; }
+    .overview-group-title.kan      { background: #eaffd7; color: var(--green-dark); }
+    .overview-group-title.kan-ikke { background: var(--red-soft); color: var(--red-dark); }
+    .overview-group-title.hoppet   { background: #fff3cd; color: #8a6800; }
+    .overview-group-title.ikke-svart { background: var(--border); color: var(--ink); }
 
     .overview-card {
-      background: #2d2d3d;
-      border-radius: 8px;
+      background: var(--surface);
+      border-radius: 12px;
       padding: 14px;
-      margin-bottom: 10px;
-      border-left: 4px solid #888;
+      margin-bottom: 8px;
+      border: 2px solid var(--border);
+      border-left-width: 5px;
     }
-    .overview-card.kan { border-left-color: #39ff14; }
-    .overview-card.kan-ikke { border-left-color: #ff4757; }
-    .overview-card.hoppet { border-left-color: #ffa502; }
-    .overview-card-chapter {
-      font-size: 10px;
-      color: #888;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 4px;
-    }
-    .overview-card-q { font-size: 14px; color: #61dafb; margin-bottom: 8px; font-weight: 500; line-height: 1.4; }
-    .overview-card-a { font-size: 13px; color: #ccc; line-height: 1.5; margin-bottom: 10px; }
-    .overview-card-actions {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
+    .overview-card.kan      { border-left-color: var(--green); }
+    .overview-card.kan-ikke { border-left-color: var(--red); }
+    .overview-card.hoppet   { border-left-color: var(--yellow); }
+    .overview-card-chapter { font-size: 10px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; font-weight: 800; }
+    .overview-card-q { font-size: 14px; color: var(--ink); margin-bottom: 6px; font-weight: 800; line-height: 1.35; }
+    .overview-card-a { font-size: 13px; color: var(--ink-soft); line-height: 1.5; margin-bottom: 10px; font-weight: 600; }
+    .overview-card-actions { display: flex; gap: 6px; flex-wrap: wrap; }
     .overview-action-btn {
       padding: 5px 10px;
       font-size: 11px;
-      border-radius: 4px;
-      border: 1px solid #444;
-      background: #1a1a2e;
-      color: #ccc;
+      border-radius: 8px;
+      border: 2px solid var(--border);
+      background: var(--surface);
+      color: var(--ink-soft);
       cursor: pointer;
-      text-transform: none;
-      letter-spacing: 0;
-      font-weight: 500;
+      font-weight: 800;
+      font-family: inherit;
     }
-    .overview-action-btn:hover { border-color: #61dafb; }
-    .overview-action-btn.kan:hover { border-color: #39ff14; color: #39ff14; }
-    .overview-action-btn.kan-ikke:hover { border-color: #ff4757; color: #ff4757; }
-    .overview-action-btn.hoppet:hover { border-color: #ffa502; color: #ffa502; }
-    .overview-action-btn.clear:hover { border-color: #888; color: #ccc; }
-    .overview-empty { color: #666; font-style: italic; padding: 12px; text-align: center; }
+    .overview-action-btn.kan:hover      { border-color: var(--green); color: var(--green-dark); }
+    .overview-action-btn.kan-ikke:hover { border-color: var(--red); color: var(--red-dark); }
+    .overview-action-btn.hoppet:hover   { border-color: var(--yellow); color: #8a6800; }
+    .overview-action-btn.clear:hover    { border-color: var(--border-strong); color: var(--ink); }
+    .overview-empty { color: var(--ink-soft); font-style: italic; padding: 10px; text-align: center; font-weight: 700; }
+
+    /* =========================== */
+    /* === SPILLET (GAME) MODE === */
+    /* =========================== */
+
+    /* Game menu */
+    #game-menu-screen { padding: 10px 0; }
+    .game-hero {
+      background: linear-gradient(135deg, var(--green) 0%, #7de324 100%);
+      color: white;
+      border-radius: 20px;
+      padding: 24px 20px;
+      text-align: center;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 0 var(--green-dark);
+    }
+    .game-hero h2 { font-size: 24px; font-weight: 900; margin-bottom: 6px; }
+    .game-hero p { font-size: 14px; opacity: 0.9; font-weight: 700; }
+    .game-stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+    .game-stat-card {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-bottom: 4px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 8px;
+      text-align: center;
+    }
+    .game-stat-icon { font-size: 22px; margin-bottom: 4px; }
+    .game-stat-num { font-size: 20px; font-weight: 900; color: var(--ink); }
+    .game-stat-label { font-size: 10px; color: var(--ink-soft); text-transform: uppercase; font-weight: 800; letter-spacing: 0.6px; margin-top: 2px; }
+
+    .game-section-title { font-size: 14px; font-weight: 800; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 10px; }
+
+    .game-chapter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .game-chapter-tile {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-bottom: 4px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: left;
+      font-family: inherit;
+    }
+    .game-chapter-tile:hover { border-color: var(--green); transform: translateY(-2px); }
+    .game-chapter-tile:active { transform: translateY(0); border-bottom-width: 2px; margin-bottom: 2px; }
+    .game-chapter-tile.all-chapters { grid-column: 1 / -1; border-color: var(--green); border-bottom-color: var(--green-dark); background: linear-gradient(135deg, #eaffd7, #fff); }
+    .gct-title { font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 6px; line-height: 1.2; }
+    .gct-progress-label { font-size: 11px; color: var(--ink-soft); font-weight: 700; display: flex; justify-content: space-between; margin-bottom: 4px; }
+    .gct-progress { height: 8px; background: var(--border); border-radius: 10px; overflow: hidden; }
+    .gct-progress-fill { height: 100%; background: var(--green); border-radius: 10px; }
+
+    /* Lesson screen */
+    #lesson-screen { padding: 0; }
+    .lesson-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .lesson-quit {
+      background: none;
+      border: none;
+      color: var(--ink-soft);
+      font-size: 22px;
+      cursor: pointer;
+      padding: 4px 8px;
+      font-weight: 900;
+    }
+    .lesson-quit:hover { color: var(--red); }
+    .lesson-progress {
+      flex: 1;
+      height: 14px;
+      background: var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    .lesson-progress-fill {
+      height: 100%;
+      background: var(--green);
+      border-radius: 20px;
+      position: relative;
+      transition: width 0.4s;
+    }
+    .lesson-progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 3px; left: 8px; right: 8px;
+      height: 3px;
+      background: rgba(255,255,255,0.4);
+      border-radius: 2px;
+    }
+    .hearts-display {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      font-weight: 900;
+      color: var(--red);
+      font-size: 16px;
+    }
+
+    .exercise-title {
+      font-size: 12px;
+      color: var(--ink-soft);
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      margin-bottom: 10px;
+    }
+    .exercise-question {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--ink);
+      line-height: 1.3;
+      margin-bottom: 22px;
+      min-height: 70px;
+    }
+    .exercise-prompt-box {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 20px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.5;
+    }
+    .exercise-prompt-box strong { color: var(--green-dark); font-weight: 800; }
+
+    .choices {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .choice {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-bottom: 4px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: inherit;
+      text-align: left;
+      color: var(--ink);
+      line-height: 1.45;
+      transition: all 0.1s;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .choice:hover { border-color: var(--blue); }
+    .choice .choice-num {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      border: 2px solid var(--border-strong);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--ink-soft);
+    }
+    .choice.selected {
+      border-color: var(--blue);
+      border-bottom-color: var(--blue-dark);
+      background: #def5ff;
+    }
+    .choice.selected .choice-num { border-color: var(--blue-dark); color: var(--blue-dark); background: white; }
+    .choice.correct {
+      border-color: var(--green);
+      border-bottom-color: var(--green-dark);
+      background: var(--green-soft);
+    }
+    .choice.correct .choice-num { border-color: var(--green-dark); color: var(--green-dark); background: white; }
+    .choice.wrong {
+      border-color: var(--red);
+      border-bottom-color: var(--red-dark);
+      background: var(--red-soft);
+    }
+    .choice.wrong .choice-num { border-color: var(--red-dark); color: var(--red-dark); background: white; }
+    .choice:disabled { cursor: default; }
+
+    .feedback-banner {
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 18px;
+      font-weight: 800;
+    }
+    .feedback-banner.correct {
+      background: var(--green-soft);
+      color: var(--green-dark);
+    }
+    .feedback-banner.wrong {
+      background: var(--red-soft);
+      color: var(--red-dark);
+    }
+    .feedback-title { font-size: 18px; margin-bottom: 4px; }
+    .feedback-answer { font-size: 13px; font-weight: 700; line-height: 1.4; opacity: 0.9; }
+    .feedback-answer strong { font-weight: 900; }
+
+    .lesson-bottom {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+    .btn-check {
+      flex: 1;
+      max-width: 320px;
+      padding: 15px 24px;
+      border: none;
+      border-radius: 14px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 900;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      background: var(--border);
+      color: var(--ink-soft);
+      box-shadow: 0 4px 0 var(--border-strong);
+      transition: filter 0.1s, transform 0.05s;
+    }
+    .btn-check:disabled { cursor: not-allowed; }
+    .btn-check.ready {
+      background: var(--green);
+      color: white;
+      box-shadow: 0 4px 0 var(--green-dark);
+    }
+    .btn-check.ready:hover { filter: brightness(1.05); }
+    .btn-check.ready:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--green-dark); }
+    .btn-check.wrong-state {
+      background: var(--red);
+      color: white;
+      box-shadow: 0 4px 0 var(--red-dark);
+    }
+    .btn-check.wrong-state:hover { filter: brightness(1.05); }
+    .btn-check.wrong-state:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--red-dark); }
+
+    /* Lesson complete */
+    #lesson-complete-screen, #lesson-failed-screen {
+      text-align: center;
+      padding: 24px 16px;
+    }
+    .complete-emoji { font-size: 64px; margin-bottom: 12px; }
+    #lesson-complete-screen h2 { font-size: 28px; font-weight: 900; color: var(--green-dark); margin-bottom: 16px; }
+    #lesson-failed-screen h2 { font-size: 28px; font-weight: 900; color: var(--red-dark); margin-bottom: 16px; }
+
+    .result-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      max-width: 500px;
+      margin: 0 auto 24px;
+    }
+    .result-stat {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-bottom: 4px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 8px;
+    }
+    .result-stat.xp { border-color: var(--yellow); border-bottom-color: var(--yellow-dark); }
+    .result-stat.streak { border-color: var(--blue); border-bottom-color: var(--blue-dark); }
+    .result-stat.accuracy { border-color: var(--green); border-bottom-color: var(--green-dark); }
+    .rs-icon { font-size: 22px; margin-bottom: 4px; }
+    .rs-num { font-size: 20px; font-weight: 900; color: var(--ink); }
+    .rs-label { font-size: 10px; color: var(--ink-soft); text-transform: uppercase; font-weight: 800; letter-spacing: 0.6px; margin-top: 2px; }
 
     .hidden { display: none !important; }
 
-    @media (max-width: 768px) {
-      h1 { font-size: 22px; }
-      .flashcard { min-height: 240px; padding: 24px; font-size: 18px; }
-      .card-front { font-size: 18px; }
-      .card-back { font-size: 14px; }
-      button { padding: 10px 18px; font-size: 12px; }
+    @media (max-width: 600px) {
+      h1 { font-size: 20px; }
+      .flashcard { min-height: 200px; padding: 40px 22px 22px; }
+      .card-front { font-size: 19px; }
+      .card-back { font-size: 15px; }
+      .btn-duo, button { font-size: 13px; }
       .finish-stats { grid-template-columns: 1fr; }
+      .game-stats-row { grid-template-columns: 1fr 1fr 1fr; }
+      .exercise-question { font-size: 19px; }
+      .mode-btn { font-size: 11px; letter-spacing: 0; }
+      .overview-summary { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>⚡ Idrett og Samfunn</h1>
-      <div class="stats">
+      <div class="header-top">
+        <h1>⚡ Idrett og Samfunn</h1>
+        <div class="xp-badge" id="xp-badge-header">⭐ <span id="header-xp">0</span> XP</div>
+      </div>
+      <div class="stats" id="main-stats">
         <span id="stat-current">Kort 1 / 92</span>
         <span id="stat-learned">Lært: 0</span>
         <span id="stat-remaining">Gjenstår: 92</span>
       </div>
-      <div class="progress-bar">
+      <div class="progress-bar" id="main-progress-bar">
         <div class="progress-fill" id="progress" style="width: 0%"></div>
       </div>
     </header>
 
     <div class="mode-switcher">
       <button class="mode-btn active" id="mode-flashcard" onclick="switchMode('flashcard')">🎴 Flashkort</button>
-      <button class="mode-btn" id="mode-quiz" onclick="switchMode('quiz')">📝 Prøve (12 spm)</button>
+      <button class="mode-btn" id="mode-quiz" onclick="switchMode('quiz')">📝 Prøve</button>
+      <button class="mode-btn" id="mode-game" onclick="switchMode('game')">🎮 Spillet</button>
     </div>
 
     <div class="chapter-filter" id="chapters"></div>
@@ -521,6 +855,7 @@
     </div>
     <button class="overview-btn" id="overview-btn" onclick="showOverview()">📊 Se oversikt over alle kort</button>
 
+    <!-- FLASHCARD MODE -->
     <div id="game-screen">
       <div class="flashcard-container">
         <div class="flashcard" id="card" onclick="flipCard()">
@@ -531,33 +866,30 @@
           <div class="hint" id="hint">Trykk Space eller klikk for å se svar</div>
         </div>
       </div>
-
       <div class="controls">
-        <button class="btn-no" onclick="markWrong()">✗ Kan ikke (Q)</button>
-        <button class="btn-skip" onclick="skipCard()">⊘ Hopp over</button>
-        <button class="btn-yes" onclick="markCorrect()">✓ Kan det (E)</button>
+        <button class="btn-duo btn-no" onclick="markWrong()">✗ Kan ikke (Q)</button>
+        <button class="btn-duo btn-skip" onclick="skipCard()">⊘ Hopp over</button>
+        <button class="btn-duo btn-yes" onclick="markCorrect()">✓ Kan det (E)</button>
       </div>
     </div>
 
+    <!-- QUIZ MODE -->
     <div id="quiz-screen" class="hidden">
       <div class="quiz-question-box">
         <div class="quiz-q-label" id="quiz-label">SPØRSMÅL 1 / 12 · VERDIGRUNNLAG</div>
         <div class="quiz-q-text" id="quiz-q-text">Spørsmål?</div>
       </div>
-
       <textarea class="quiz-textarea" id="quiz-textarea" placeholder="Skriv svaret ditt her..."></textarea>
-
       <div class="controls" id="quiz-controls-pre">
-        <button class="btn-yes" onclick="revealAnswer()">Vis fasit</button>
+        <button class="btn-duo btn-yes" onclick="revealAnswer()">Vis fasit</button>
       </div>
-
       <div id="quiz-reveal-area" class="hidden">
         <div class="quiz-user-answer" id="quiz-user-answer-display"></div>
         <div class="quiz-reveal">
           <div class="quiz-reveal-label">Fasit</div>
           <div class="quiz-reveal-text" id="quiz-reveal-text"></div>
         </div>
-        <div style="text-align:center; color:#888; font-size:13px; margin-bottom:8px;">Hvor nært var svaret ditt?</div>
+        <div style="text-align:center; color:var(--ink-soft); font-size:13px; margin-bottom:10px; font-weight:700;">Hvor nært var svaret ditt?</div>
         <div class="quiz-grade-buttons">
           <button class="btn-grade btn-grade-zero" onclick="gradeAnswer(0)">✗ Feil (0p)</button>
           <button class="btn-grade btn-grade-half" onclick="gradeAnswer(0.5)">🟡 Delvis (½p)</button>
@@ -571,16 +903,17 @@
       <div class="quiz-score-big" id="quiz-final-score">0</div>
       <div class="quiz-score-total">av 12 poeng</div>
       <div class="quiz-review" id="quiz-review-list"></div>
-      <button class="btn-yes" onclick="startQuiz()" style="margin-right: 12px;">Ny prøve</button>
-      <button class="btn-skip" onclick="switchMode('flashcard')">Tilbake til flashkort</button>
+      <button class="btn-duo btn-yes" onclick="startQuiz()" style="margin-right: 10px;">Ny prøve</button>
+      <button class="btn-duo btn-skip" onclick="switchMode('flashcard')">Til flashkort</button>
     </div>
 
+    <!-- OVERVIEW -->
     <div id="overview-screen" class="hidden">
       <h2>📊 Oversikt</h2>
       <div class="overview-summary" id="overview-summary"></div>
       <div style="text-align:center; margin-bottom:16px;">
-        <button class="btn-skip" onclick="closeOverview()">← Tilbake</button>
-        <button class="btn-skip" onclick="clearAllProgress()" style="background:#5d2d2d; color:#ff8a8a; margin-left:8px;">🗑 Nullstill all fremgang</button>
+        <button class="btn-duo btn-skip" onclick="closeOverview()">← Tilbake</button>
+        <button class="btn-duo btn-no" onclick="clearAllProgress()" style="margin-left:8px;">🗑 Nullstill</button>
       </div>
       <div id="overview-content"></div>
     </div>
@@ -597,8 +930,83 @@
           <div class="stat-label">Å øve på</div>
         </div>
       </div>
-      <button class="btn-yes" onclick="resetRound()" style="margin-right: 12px;">Øv på feil-kortene</button>
-      <button class="btn-skip" onclick="resetAllCards()">Start på nytt</button>
+      <button class="btn-duo btn-yes" onclick="resetRound()" style="margin-right: 10px;">Øv på feil</button>
+      <button class="btn-duo btn-skip" onclick="resetAllCards()">Start på nytt</button>
+    </div>
+
+    <!-- GAME / SPILLET MODE -->
+    <div id="game-menu-screen" class="hidden">
+      <div class="game-hero">
+        <h2>🎮 Spillet</h2>
+        <p>Lynrask læring med leksjoner, hjerter og XP</p>
+      </div>
+      <div class="game-stats-row">
+        <div class="game-stat-card">
+          <div class="game-stat-icon">⭐</div>
+          <div class="game-stat-num" id="menu-xp">0</div>
+          <div class="game-stat-label">Total XP</div>
+        </div>
+        <div class="game-stat-card">
+          <div class="game-stat-icon">🔥</div>
+          <div class="game-stat-num" id="menu-streak">0</div>
+          <div class="game-stat-label">Beste streak</div>
+        </div>
+        <div class="game-stat-card">
+          <div class="game-stat-icon">🏆</div>
+          <div class="game-stat-num" id="menu-lessons">0</div>
+          <div class="game-stat-label">Leksjoner</div>
+        </div>
+      </div>
+      <div class="game-section-title">Velg kapittel</div>
+      <div class="game-chapter-grid" id="game-chapter-grid"></div>
+    </div>
+
+    <div id="lesson-screen" class="hidden">
+      <div class="lesson-bar">
+        <button class="lesson-quit" onclick="quitLesson()" title="Avslutt">✕</button>
+        <div class="lesson-progress"><div class="lesson-progress-fill" id="lesson-progress-fill" style="width:0%"></div></div>
+        <div class="hearts-display" id="hearts-display">❤️ 3</div>
+      </div>
+      <div class="exercise-title" id="exercise-title">VELG RIKTIG SVAR</div>
+      <div class="exercise-question" id="exercise-question"></div>
+      <div id="exercise-prompt-wrap"></div>
+      <div class="choices" id="choices"></div>
+      <div id="feedback-wrap"></div>
+      <div class="lesson-bottom">
+        <button class="btn-check" id="btn-check" onclick="checkOrContinue()" disabled>VELG SVAR</button>
+      </div>
+    </div>
+
+    <div id="lesson-complete-screen" class="hidden">
+      <div class="complete-emoji">🎉</div>
+      <h2>Leksjon fullført!</h2>
+      <div class="result-stats">
+        <div class="result-stat xp">
+          <div class="rs-icon">⭐</div>
+          <div class="rs-num" id="lc-xp">0</div>
+          <div class="rs-label">XP tjent</div>
+        </div>
+        <div class="result-stat streak">
+          <div class="rs-icon">🔥</div>
+          <div class="rs-num" id="lc-streak">0</div>
+          <div class="rs-label">Rett på rad</div>
+        </div>
+        <div class="result-stat accuracy">
+          <div class="rs-icon">🎯</div>
+          <div class="rs-num" id="lc-accuracy">0%</div>
+          <div class="rs-label">Treffsikker</div>
+        </div>
+      </div>
+      <button class="btn-duo btn-yes" onclick="startLessonWithLast()" style="margin-right: 10px;">Ny leksjon</button>
+      <button class="btn-duo btn-skip" onclick="showGameMenu()">Til menyen</button>
+    </div>
+
+    <div id="lesson-failed-screen" class="hidden">
+      <div class="complete-emoji">💔</div>
+      <h2>Tomt for hjerter!</h2>
+      <p style="color:var(--ink-soft); font-weight:700; margin-bottom:22px;">Du kom til spørsmål <span id="lf-progress">0</span> av <span id="lf-total">0</span>. Prøv igjen!</p>
+      <button class="btn-duo btn-yes" onclick="startLessonWithLast()" style="margin-right: 10px;">Prøv igjen</button>
+      <button class="btn-duo btn-skip" onclick="showGameMenu()">Til menyen</button>
     </div>
   </div>
 
@@ -719,6 +1127,9 @@
       { id: 92, chapter: "Idrettspolitikk", q: "Frivilligheten og dugnad i idretten – hvorfor er det viktig?", a: "Utgjør mye av inntektene. Bygger felleskap rundt lag/klubben. Gjør at medlemskongenter og treningsavgifter kan være lavere, så flere barn og unge har råd til å delta." }
     ];
 
+    // ================================
+    // STATE
+    // ================================
     let currentDeck = [...allCards];
     let currentIndex = 0;
     let learned = [];
@@ -727,22 +1138,68 @@
     let selectedChapter = null;
     let selectedStatus = null;
     let cardProgress = {};
+    let currentMode = 'flashcard';
 
+    // Quiz state
+    let quizQuestions = [];
+    let quizIndex = 0;
+    let quizScore = 0;
+    let quizAnswers = [];
+
+    // Game state
+    let gameStats = { totalXP: 0, bestStreak: 0, lessonsCompleted: 0 };
+    let lessonState = null;
+    let lastChapterChoice = null; // for "Ny leksjon" button
+
+    // ================================
+    // INIT
+    // ================================
     function init() {
       loadProgress();
+      loadGameStats();
       renderChapters();
+      updateHeaderXP();
       rebuildDeck();
     }
 
-    function getStatus(cardId) {
-      return cardProgress[cardId] || 'ikke-svart';
+    function getStatus(cardId) { return cardProgress[cardId] || 'ikke-svart'; }
+
+    function saveProgress() { localStorage.setItem('cardProgress', JSON.stringify(cardProgress)); }
+    function loadProgress() {
+      const saved = localStorage.getItem('cardProgress');
+      if (saved) { try { cardProgress = JSON.parse(saved); } catch (e) { cardProgress = {}; } }
+    }
+    function saveGameStats() { localStorage.setItem('gameStats', JSON.stringify(gameStats)); }
+    function loadGameStats() {
+      const saved = localStorage.getItem('gameStats');
+      if (saved) {
+        try { gameStats = { ...gameStats, ...JSON.parse(saved) }; } catch (e) {}
+      }
+    }
+    function updateHeaderXP() {
+      document.getElementById('header-xp').textContent = gameStats.totalXP;
     }
 
+    function stripHtml(html) {
+      const tmp = document.createElement('div');
+      tmp.innerHTML = html;
+      return (tmp.textContent || tmp.innerText || '').trim();
+    }
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // ================================
+    // FLASHCARD MODE
+    // ================================
     function rebuildDeck() {
       let deck = selectedChapter ? allCards.filter(c => c.chapter === selectedChapter) : [...allCards];
-      if (selectedStatus) {
-        deck = deck.filter(c => getStatus(c.id) === selectedStatus);
-      }
+      if (selectedStatus) deck = deck.filter(c => getStatus(c.id) === selectedStatus);
       currentDeck = deck;
       currentIndex = 0;
       learned = [];
@@ -756,6 +1213,7 @@
     function renderChapters() {
       const chapters = [...new Set(allCards.map(c => c.chapter))].sort();
       const container = document.getElementById('chapters');
+      container.innerHTML = '';
 
       const allChip = document.createElement('button');
       allChip.className = 'chip active';
@@ -774,10 +1232,9 @@
 
     function filterChapter(chapter) {
       selectedChapter = chapter;
-      document.querySelectorAll('.chip').forEach((chip, idx) => {
+      document.querySelectorAll('#chapters .chip').forEach((chip, idx) => {
         chip.classList.toggle('active',
-          (idx === 0 && !chapter) ||
-          (chapter && chip.textContent === chapter)
+          (idx === 0 && !chapter) || (chapter && chip.textContent === chapter)
         );
       });
       rebuildDeck();
@@ -810,7 +1267,6 @@
         finishRound();
         return;
       }
-
       const card = currentDeck[currentIndex];
       document.getElementById('card-front').innerHTML = card.q;
       document.getElementById('card-back').innerHTML = card.a;
@@ -821,7 +1277,6 @@
       document.getElementById('card-back').classList.add('hidden');
       document.getElementById('hint').classList.remove('hidden');
       isFlipped = false;
-
       updateStats();
     }
 
@@ -834,6 +1289,7 @@
     }
 
     function markCorrect() {
+      if (currentDeck.length === 0) return;
       if (!isFlipped) flipCard();
       const id = currentDeck[currentIndex].id;
       cardProgress[id] = 'kan';
@@ -842,8 +1298,8 @@
       currentIndex++;
       setTimeout(showNextCard, 200);
     }
-
     function markWrong() {
+      if (currentDeck.length === 0) return;
       if (!isFlipped) flipCard();
       const id = currentDeck[currentIndex].id;
       cardProgress[id] = 'kan-ikke';
@@ -852,8 +1308,8 @@
       currentIndex++;
       setTimeout(showNextCard, 200);
     }
-
     function skipCard() {
+      if (currentDeck.length === 0) return;
       const id = currentDeck[currentIndex].id;
       cardProgress[id] = 'hoppet';
       saveProgress();
@@ -891,51 +1347,31 @@
         showNextCard();
       }
     }
+    function resetAllCards() { rebuildDeck(); }
 
-    function resetAllCards() {
-      rebuildDeck();
-    }
-
-    function saveProgress() {
-      localStorage.setItem('cardProgress', JSON.stringify(cardProgress));
-    }
-
-    function loadProgress() {
-      const saved = localStorage.getItem('cardProgress');
-      if (saved) {
-        try { cardProgress = JSON.parse(saved); } catch (e) { cardProgress = {}; }
-      }
-    }
-
+    // ================================
+    // OVERVIEW
+    // ================================
     function showOverview() {
-      document.getElementById('game-screen').classList.add('hidden');
-      document.getElementById('finish-screen').classList.add('hidden');
+      hideAllScreens();
       document.getElementById('chapters').classList.add('hidden');
       document.getElementById('status-filter').classList.add('hidden');
       document.getElementById('overview-btn').classList.add('hidden');
-      document.querySelector('.progress-bar').classList.add('hidden');
-      document.querySelector('.stats').classList.add('hidden');
+      document.getElementById('main-progress-bar').classList.add('hidden');
+      document.getElementById('main-stats').classList.add('hidden');
       document.getElementById('overview-screen').classList.remove('hidden');
       renderOverview();
     }
-
     function closeOverview() {
       document.getElementById('overview-screen').classList.add('hidden');
-      document.getElementById('chapters').classList.remove('hidden');
-      document.getElementById('status-filter').classList.remove('hidden');
-      document.getElementById('overview-btn').classList.remove('hidden');
-      document.querySelector('.progress-bar').classList.remove('hidden');
-      document.querySelector('.stats').classList.remove('hidden');
-      document.getElementById('game-screen').classList.remove('hidden');
-      showNextCard();
+      switchMode('flashcard');
     }
 
     function renderOverview() {
       const counts = { kan: 0, 'kan-ikke': 0, hoppet: 0, 'ikke-svart': 0 };
       allCards.forEach(c => { counts[getStatus(c.id)]++; });
 
-      const summary = document.getElementById('overview-summary');
-      summary.innerHTML = `
+      document.getElementById('overview-summary').innerHTML = `
         <div class="overview-summary-box kan"><div class="overview-summary-num">${counts['kan']}</div><div class="overview-summary-label">🟢 Kan</div></div>
         <div class="overview-summary-box kan-ikke"><div class="overview-summary-num">${counts['kan-ikke']}</div><div class="overview-summary-label">🔴 Kan ikke</div></div>
         <div class="overview-summary-box hoppet"><div class="overview-summary-num">${counts['hoppet']}</div><div class="overview-summary-label">⊘ Hoppet</div></div>
@@ -948,7 +1384,6 @@
         { status: 'kan', label: '🟢 Kan' },
         { status: 'ikke-svart', label: '⚪ Ikke svart' }
       ];
-
       let html = '';
       groups.forEach(g => {
         const cards = allCards.filter(c => getStatus(c.id) === g.status);
@@ -978,15 +1413,11 @@
     }
 
     function changeCardStatus(id, status) {
-      if (status === null) {
-        delete cardProgress[id];
-      } else {
-        cardProgress[id] = status;
-      }
+      if (status === null) delete cardProgress[id];
+      else cardProgress[id] = status;
       saveProgress();
       renderOverview();
     }
-
     function clearAllProgress() {
       if (!confirm('Er du sikker? Dette fjerner all fremgang på alle kort.')) return;
       cardProgress = {};
@@ -994,94 +1425,39 @@
       renderOverview();
     }
 
+    // ================================
+    // KEYBOARD
+    // ================================
     document.addEventListener('keydown', (e) => {
-      if (currentMode !== 'flashcard') return;
-      if (e.code === 'Space') { e.preventDefault(); flipCard(); }
-      if (e.key === 'q' || e.key === 'Q') markWrong();
-      if (e.key === 'e' || e.key === 'E') markCorrect();
-      if (e.key === 'ArrowLeft') skipCard();
-      if (e.key === 'ArrowRight') skipCard();
+      if (currentMode === 'flashcard') {
+        if (e.code === 'Space') { e.preventDefault(); flipCard(); }
+        if (e.key === 'q' || e.key === 'Q') markWrong();
+        if (e.key === 'e' || e.key === 'E') markCorrect();
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') skipCard();
+      }
     });
 
-    // ===== PRØVE / QUIZ MODE =====
-    let currentMode = 'flashcard';
-    let quizQuestions = [];
-    let quizIndex = 0;
-    let quizScore = 0;
-    let quizAnswers = []; // { card, userAnswer, score }
-
-    function switchMode(mode) {
-      currentMode = mode;
-      document.getElementById('mode-flashcard').classList.toggle('active', mode === 'flashcard');
-      document.getElementById('mode-quiz').classList.toggle('active', mode === 'quiz');
-
-      const gameScreen = document.getElementById('game-screen');
-      const finishScreen = document.getElementById('finish-screen');
-      const quizScreen = document.getElementById('quiz-screen');
-      const quizResultScreen = document.getElementById('quiz-result-screen');
-      const chapters = document.getElementById('chapters');
-      const statusFilter = document.getElementById('status-filter');
-      const overviewBtn = document.getElementById('overview-btn');
-      const overviewScreen = document.getElementById('overview-screen');
-      const progressBar = document.querySelector('.progress-bar');
-      const statsDiv = document.querySelector('.stats');
-
-      if (mode === 'flashcard') {
-        gameScreen.classList.remove('hidden');
-        chapters.classList.remove('hidden');
-        statusFilter.classList.remove('hidden');
-        overviewBtn.classList.remove('hidden');
-        progressBar.classList.remove('hidden');
-        statsDiv.classList.remove('hidden');
-        quizScreen.classList.add('hidden');
-        quizResultScreen.classList.add('hidden');
-        finishScreen.classList.add('hidden');
-        overviewScreen.classList.add('hidden');
-      } else {
-        gameScreen.classList.add('hidden');
-        finishScreen.classList.add('hidden');
-        chapters.classList.add('hidden');
-        statusFilter.classList.add('hidden');
-        overviewBtn.classList.add('hidden');
-        overviewScreen.classList.add('hidden');
-        progressBar.classList.add('hidden');
-        statsDiv.classList.add('hidden');
-        quizResultScreen.classList.add('hidden');
-        startQuiz();
-      }
-    }
-
+    // ================================
+    // QUIZ / PRØVE
+    // ================================
     function startQuiz() {
-      // Sample 12 questions spread across all 11 chapters:
-      // pick 1 from each chapter = 11, then 1 extra random
       const chapters = [...new Set(allCards.map(c => c.chapter))];
       const picked = [];
       const usedIds = new Set();
-
       chapters.forEach(ch => {
         const pool = allCards.filter(c => c.chapter === ch);
         const pick = pool[Math.floor(Math.random() * pool.length)];
         picked.push(pick);
         usedIds.add(pick.id);
       });
-
-      // Add 1 more random from anywhere (not already picked)
       const remaining = allCards.filter(c => !usedIds.has(c.id));
-      if (remaining.length > 0) {
-        picked.push(remaining[Math.floor(Math.random() * remaining.length)]);
-      }
-
-      // Shuffle final order
-      for (let i = picked.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [picked[i], picked[j]] = [picked[j], picked[i]];
-      }
+      if (remaining.length > 0) picked.push(remaining[Math.floor(Math.random() * remaining.length)]);
+      shuffle(picked);
 
       quizQuestions = picked;
       quizIndex = 0;
       quizScore = 0;
       quizAnswers = [];
-
       document.getElementById('quiz-screen').classList.remove('hidden');
       document.getElementById('quiz-result-screen').classList.add('hidden');
       showQuizQuestion();
@@ -1098,38 +1474,29 @@
       document.getElementById('quiz-controls-pre').classList.remove('hidden');
       document.getElementById('quiz-textarea').focus();
     }
-
     function revealAnswer() {
       const card = quizQuestions[quizIndex];
       const userAnswer = document.getElementById('quiz-textarea').value.trim();
-      document.getElementById('quiz-user-answer-display').textContent =
-        userAnswer || '(tomt svar)';
+      document.getElementById('quiz-user-answer-display').textContent = userAnswer || '(tomt svar)';
       document.getElementById('quiz-reveal-text').innerHTML = card.a;
       document.getElementById('quiz-textarea').disabled = true;
       document.getElementById('quiz-controls-pre').classList.add('hidden');
       document.getElementById('quiz-reveal-area').classList.remove('hidden');
     }
-
     function gradeAnswer(score) {
       const card = quizQuestions[quizIndex];
       const userAnswer = document.getElementById('quiz-textarea').value.trim();
       quizAnswers.push({ card, userAnswer, score });
       quizScore += score;
       quizIndex++;
-
-      if (quizIndex >= quizQuestions.length) {
-        finishQuiz();
-      } else {
-        showQuizQuestion();
-      }
+      if (quizIndex >= quizQuestions.length) finishQuiz();
+      else showQuizQuestion();
     }
-
     function finishQuiz() {
       document.getElementById('quiz-screen').classList.add('hidden');
       document.getElementById('quiz-result-screen').classList.remove('hidden');
       document.getElementById('quiz-final-score').textContent =
         quizScore % 1 === 0 ? quizScore : quizScore.toFixed(1);
-
       const reviewList = document.getElementById('quiz-review-list');
       reviewList.innerHTML = '';
       quizAnswers.forEach((item, i) => {
@@ -1144,6 +1511,308 @@
         `;
         reviewList.appendChild(div);
       });
+    }
+
+    // ================================
+    // SPILLET (GAME MODE) – Duolingo-style lessons
+    // ================================
+
+    function hideAllScreens() {
+      ['game-screen','finish-screen','quiz-screen','quiz-result-screen','overview-screen',
+       'game-menu-screen','lesson-screen','lesson-complete-screen','lesson-failed-screen']
+       .forEach(id => document.getElementById(id).classList.add('hidden'));
+    }
+
+    function showGameMenu() {
+      currentMode = 'game';
+      hideAllScreens();
+      document.getElementById('chapters').classList.add('hidden');
+      document.getElementById('status-filter').classList.add('hidden');
+      document.getElementById('overview-btn').classList.add('hidden');
+      document.getElementById('main-progress-bar').classList.add('hidden');
+      document.getElementById('main-stats').classList.add('hidden');
+      document.getElementById('game-menu-screen').classList.remove('hidden');
+      renderGameMenu();
+    }
+
+    function renderGameMenu() {
+      document.getElementById('menu-xp').textContent = gameStats.totalXP;
+      document.getElementById('menu-streak').textContent = gameStats.bestStreak;
+      document.getElementById('menu-lessons').textContent = gameStats.lessonsCompleted;
+
+      const grid = document.getElementById('game-chapter-grid');
+      const chapters = [...new Set(allCards.map(c => c.chapter))].sort();
+
+      const totalKan = allCards.filter(c => getStatus(c.id) === 'kan').length;
+      const allTile = `
+        <button class="game-chapter-tile all-chapters" onclick="startLesson(null)">
+          <div class="gct-title">🎲 Tilfeldig fra alle kapitler</div>
+          <div class="gct-progress-label"><span>Alle 92 kort</span><span>${totalKan}/${allCards.length}</span></div>
+          <div class="gct-progress"><div class="gct-progress-fill" style="width:${(totalKan/allCards.length)*100}%"></div></div>
+        </button>
+      `;
+      let html = allTile;
+      chapters.forEach(ch => {
+        const cards = allCards.filter(c => c.chapter === ch);
+        const kan = cards.filter(c => getStatus(c.id) === 'kan').length;
+        const pct = (kan / cards.length) * 100;
+        html += `
+          <button class="game-chapter-tile" onclick="startLesson('${ch.replace(/'/g, "\\'")}')">
+            <div class="gct-title">${ch}</div>
+            <div class="gct-progress-label"><span>${cards.length} kort</span><span>${kan}/${cards.length}</span></div>
+            <div class="gct-progress"><div class="gct-progress-fill" style="width:${pct}%"></div></div>
+          </button>
+        `;
+      });
+      grid.innerHTML = html;
+    }
+
+    function startLesson(chapter) {
+      lastChapterChoice = chapter;
+      let pool = chapter ? allCards.filter(c => c.chapter === chapter) : [...allCards];
+      // Prefer kan-ikke and ikke-svart cards
+      pool.sort((a, b) => {
+        const w = { 'kan-ikke': 0, 'hoppet': 1, 'ikke-svart': 2, 'kan': 3 };
+        return w[getStatus(a.id)] - w[getStatus(b.id)];
+      });
+      const priorityCount = Math.min(pool.length, Math.ceil(pool.length * 0.7));
+      const priority = pool.slice(0, priorityCount);
+      shuffle(priority);
+      const lessonSize = Math.min(8, pool.length);
+      let lessonCards = priority.slice(0, lessonSize);
+      if (lessonCards.length < lessonSize) {
+        const rest = pool.slice(priorityCount);
+        shuffle(rest);
+        lessonCards = lessonCards.concat(rest.slice(0, lessonSize - lessonCards.length));
+      }
+      shuffle(lessonCards);
+
+      lessonState = {
+        chapter,
+        cards: lessonCards,
+        currentIdx: 0,
+        hearts: 3,
+        correct: 0,
+        xpGained: 0,
+        streakThisLesson: 0,
+        checked: false,
+        selectedChoice: null,
+        correctAnswer: null,
+        failed: false,
+        exerciseType: 'q-to-a'
+      };
+
+      hideAllScreens();
+      document.getElementById('lesson-screen').classList.remove('hidden');
+      renderExercise();
+    }
+
+    function startLessonWithLast() { startLesson(lastChapterChoice); }
+
+    function renderExercise() {
+      const card = lessonState.cards[lessonState.currentIdx];
+      lessonState.checked = false;
+      lessonState.selectedChoice = null;
+
+      // Alternate exercise types for variety
+      // Type A: Q → pick correct A
+      // Type B: A → pick correct Q
+      const useReverse = Math.random() < 0.3 && stripHtml(card.a).length < 120;
+      lessonState.exerciseType = useReverse ? 'a-to-q' : 'q-to-a';
+
+      let promptText, correctChoice, choicePool;
+      if (lessonState.exerciseType === 'a-to-q') {
+        document.getElementById('exercise-title').textContent = 'HVILKEN QUESTION PASSER TIL DETTE SVARET?';
+        document.getElementById('exercise-title').textContent = 'HVILKET SPØRSMÅL PASSER?';
+        document.getElementById('exercise-question').textContent = stripHtml(card.a);
+        document.getElementById('exercise-prompt-wrap').innerHTML =
+          `<div class="exercise-prompt-box" style="font-size:12px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.6px;">Kapittel: ${card.chapter}</div>`;
+        correctChoice = card.q;
+        const others = allCards.filter(c => c.id !== card.id);
+        shuffle(others);
+        choicePool = [correctChoice, others[0].q, others[1].q, others[2].q];
+      } else {
+        document.getElementById('exercise-title').textContent = 'VELG RIKTIG SVAR';
+        document.getElementById('exercise-question').textContent = stripHtml(card.q);
+        document.getElementById('exercise-prompt-wrap').innerHTML =
+          `<div class="exercise-prompt-box" style="font-size:12px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.6px;">Kapittel: ${card.chapter}</div>`;
+        correctChoice = card.a;
+        // Try to pick wrong answers from same chapter first for plausibility
+        const sameChapter = allCards.filter(c => c.id !== card.id && c.chapter === card.chapter);
+        const other = allCards.filter(c => c.id !== card.id && c.chapter !== card.chapter);
+        shuffle(sameChapter); shuffle(other);
+        const wrongs = [...sameChapter, ...other].slice(0, 3).map(c => c.a);
+        choicePool = [correctChoice, ...wrongs];
+      }
+
+      shuffle(choicePool);
+      lessonState.correctAnswer = correctChoice;
+      lessonState.choices = choicePool;
+
+      const choicesEl = document.getElementById('choices');
+      choicesEl.innerHTML = '';
+      choicePool.forEach((choice, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'choice';
+        btn.innerHTML = `<span class="choice-num">${i + 1}</span><span>${stripHtml(choice)}</span>`;
+        btn.setAttribute('data-choice', choice);
+        btn.onclick = () => selectChoice(btn, choice);
+        choicesEl.appendChild(btn);
+      });
+
+      // Update progress + hearts
+      const pct = ((lessonState.currentIdx) / lessonState.cards.length) * 100;
+      document.getElementById('lesson-progress-fill').style.width = pct + '%';
+      document.getElementById('hearts-display').innerHTML = '❤️'.repeat(lessonState.hearts) || '💔';
+
+      // Reset button + feedback
+      document.getElementById('feedback-wrap').innerHTML = '';
+      const btn = document.getElementById('btn-check');
+      btn.textContent = 'SJEKK';
+      btn.className = 'btn-check';
+      btn.disabled = true;
+    }
+
+    function selectChoice(btnEl, choice) {
+      if (lessonState.checked) return;
+      document.querySelectorAll('#choices .choice').forEach(b => b.classList.remove('selected'));
+      btnEl.classList.add('selected');
+      lessonState.selectedChoice = choice;
+      const check = document.getElementById('btn-check');
+      check.className = 'btn-check ready';
+      check.textContent = 'SJEKK';
+      check.disabled = false;
+    }
+
+    function checkOrContinue() {
+      if (lessonState.checked) {
+        nextExercise();
+        return;
+      }
+      if (lessonState.selectedChoice === null) return;
+      lessonState.checked = true;
+
+      const card = lessonState.cards[lessonState.currentIdx];
+      const isCorrect = lessonState.selectedChoice === lessonState.correctAnswer;
+
+      document.querySelectorAll('#choices .choice').forEach(b => {
+        b.disabled = true;
+        const choice = b.getAttribute('data-choice');
+        if (choice === lessonState.correctAnswer) b.classList.add('correct');
+        else if (choice === lessonState.selectedChoice) b.classList.add('wrong');
+        b.classList.remove('selected');
+      });
+
+      const feedback = document.getElementById('feedback-wrap');
+      if (isCorrect) {
+        lessonState.correct++;
+        lessonState.xpGained += 10;
+        lessonState.streakThisLesson++;
+        cardProgress[card.id] = 'kan';
+        feedback.innerHTML = `
+          <div class="feedback-banner correct">
+            <div class="feedback-title">✓ Riktig! +10 XP</div>
+            <div class="feedback-answer">${card.a}</div>
+          </div>
+        `;
+        const check = document.getElementById('btn-check');
+        check.textContent = 'FORTSETT';
+        check.className = 'btn-check ready';
+      } else {
+        lessonState.hearts--;
+        lessonState.streakThisLesson = 0;
+        cardProgress[card.id] = 'kan-ikke';
+        feedback.innerHTML = `
+          <div class="feedback-banner wrong">
+            <div class="feedback-title">✗ Feil${lessonState.hearts > 0 ? ' – -1 hjerte' : ''}</div>
+            <div class="feedback-answer"><strong>Riktig:</strong> ${lessonState.correctAnswer}</div>
+          </div>
+        `;
+        const check = document.getElementById('btn-check');
+        check.textContent = 'FORTSETT';
+        check.className = 'btn-check wrong-state';
+
+        if (lessonState.hearts <= 0) lessonState.failed = true;
+      }
+
+      document.getElementById('hearts-display').innerHTML = '❤️'.repeat(Math.max(lessonState.hearts, 0)) || '💔';
+      saveProgress();
+    }
+
+    function nextExercise() {
+      if (lessonState.failed) { showLessonFailed(); return; }
+      lessonState.currentIdx++;
+      if (lessonState.currentIdx >= lessonState.cards.length) { completeLesson(); return; }
+      renderExercise();
+    }
+
+    function quitLesson() {
+      if (!confirm('Avslutt leksjonen? Fremgang i denne leksjonen tapes.')) return;
+      showGameMenu();
+    }
+
+    function completeLesson() {
+      gameStats.totalXP += lessonState.xpGained;
+      gameStats.lessonsCompleted++;
+      if (lessonState.streakThisLesson > gameStats.bestStreak) {
+        gameStats.bestStreak = lessonState.streakThisLesson;
+      }
+      saveGameStats();
+      updateHeaderXP();
+
+      document.getElementById('lc-xp').textContent = lessonState.xpGained;
+      document.getElementById('lc-streak').textContent = lessonState.streakThisLesson;
+      const accuracy = Math.round((lessonState.correct / lessonState.cards.length) * 100);
+      document.getElementById('lc-accuracy').textContent = accuracy + '%';
+
+      document.getElementById('lesson-progress-fill').style.width = '100%';
+      hideAllScreens();
+      document.getElementById('lesson-complete-screen').classList.remove('hidden');
+    }
+
+    function showLessonFailed() {
+      saveGameStats();
+      updateHeaderXP();
+      document.getElementById('lf-progress').textContent = lessonState.currentIdx + 1;
+      document.getElementById('lf-total').textContent = lessonState.cards.length;
+      hideAllScreens();
+      document.getElementById('lesson-failed-screen').classList.remove('hidden');
+    }
+
+    // ================================
+    // MODE SWITCHER
+    // ================================
+    function switchMode(mode) {
+      currentMode = mode;
+      document.getElementById('mode-flashcard').classList.toggle('active', mode === 'flashcard');
+      document.getElementById('mode-quiz').classList.toggle('active', mode === 'quiz');
+      document.getElementById('mode-game').classList.toggle('active', mode === 'game');
+
+      hideAllScreens();
+      const chapters = document.getElementById('chapters');
+      const statusFilter = document.getElementById('status-filter');
+      const overviewBtn = document.getElementById('overview-btn');
+      const progressBar = document.getElementById('main-progress-bar');
+      const statsDiv = document.getElementById('main-stats');
+
+      if (mode === 'flashcard') {
+        chapters.classList.remove('hidden');
+        statusFilter.classList.remove('hidden');
+        overviewBtn.classList.remove('hidden');
+        progressBar.classList.remove('hidden');
+        statsDiv.classList.remove('hidden');
+        document.getElementById('game-screen').classList.remove('hidden');
+        showNextCard();
+      } else if (mode === 'quiz') {
+        chapters.classList.add('hidden');
+        statusFilter.classList.add('hidden');
+        overviewBtn.classList.add('hidden');
+        progressBar.classList.add('hidden');
+        statsDiv.classList.add('hidden');
+        startQuiz();
+      } else if (mode === 'game') {
+        showGameMenu();
+      }
     }
 
     init();
