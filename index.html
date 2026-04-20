@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Idrett og Samfunn – Flashkort</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1e1e2e 0%, #0f0f1e 100%);
+      color: #e0e0e0;
+      min-height: 100vh;
+      padding: 16px;
+    }
+    .container { max-width: 900px; margin: 0 auto; }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    h1 { font-size: 28px; margin-bottom: 8px; color: #61dafb; }
+    .stats {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 12px;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: #333;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #61dafb, #39ff14);
+      transition: width 0.3s;
+    }
+
+    .chapter-filter {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+      justify-content: center;
+    }
+    .chip {
+      padding: 8px 14px;
+      border: 2px solid #333;
+      background: transparent;
+      color: #e0e0e0;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .chip:hover { border-color: #61dafb; }
+    .chip.active {
+      background: #61dafb;
+      color: #0f0f1e;
+      border-color: #61dafb;
+    }
+
+    .flashcard-container {
+      perspective: 1000px;
+      margin-bottom: 32px;
+    }
+    .flashcard {
+      width: 100%;
+      min-height: 280px;
+      background: linear-gradient(135deg, #2d2d3d, #1a1a2e);
+      border: 2px solid #39ff14;
+      border-radius: 12px;
+      padding: 32px;
+      cursor: pointer;
+      transition: transform 0.3s;
+      transform-style: preserve-3d;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 8px 32px rgba(57, 255, 20, 0.15);
+    }
+    .flashcard:hover { transform: scale(1.01); }
+    .flashcard.flipped {
+      border-color: #61dafb;
+      box-shadow: 0 8px 32px rgba(97, 218, 251, 0.15);
+    }
+
+    .card-label {
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      font-size: 11px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .card-number {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      font-size: 12px;
+      color: #666;
+    }
+
+    .card-front { font-size: 20px; font-weight: 500; color: #39ff14; }
+    .card-back { font-size: 16px; line-height: 1.6; color: #e0e0e0; }
+    .card-back strong { color: #61dafb; }
+
+    .hint {
+      position: absolute;
+      bottom: 12px;
+      right: 16px;
+      font-size: 12px;
+      color: #666;
+      font-style: italic;
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+    button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .btn-yes {
+      background: linear-gradient(135deg, #39ff14, #32cd32);
+      color: #0f0f1e;
+    }
+    .btn-yes:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(57, 255, 20, 0.4); }
+    .btn-no {
+      background: linear-gradient(135deg, #ff4757, #ff6b6b);
+      color: white;
+    }
+    .btn-no:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255, 71, 87, 0.4); }
+    .btn-skip {
+      background: #333;
+      color: #e0e0e0;
+    }
+    .btn-skip:hover { background: #444; }
+
+    .finish-screen {
+      text-align: center;
+      padding: 48px 24px;
+    }
+    .finish-screen h2 {
+      font-size: 32px;
+      margin-bottom: 24px;
+      color: #39ff14;
+    }
+    .finish-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 32px;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .stat-box {
+      background: #2d2d3d;
+      padding: 20px;
+      border-radius: 8px;
+      border-left: 4px solid #39ff14;
+    }
+    .stat-box.red { border-left-color: #ff4757; }
+    .stat-number {
+      font-size: 28px;
+      font-weight: bold;
+      color: #39ff14;
+      margin-bottom: 4px;
+    }
+    .stat-box.red .stat-number { color: #ff4757; }
+    .stat-label {
+      font-size: 13px;
+      color: #888;
+      text-transform: uppercase;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 768px) {
+      h1 { font-size: 22px; }
+      .flashcard { min-height: 240px; padding: 24px; font-size: 18px; }
+      .card-front { font-size: 18px; }
+      .card-back { font-size: 14px; }
+      button { padding: 10px 18px; font-size: 12px; }
+      .finish-stats { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>⚡ Idrett og Samfunn</h1>
+      <div class="stats">
+        <span id="stat-current">Kort 1 / 92</span>
+        <span id="stat-learned">Lært: 0</span>
+        <span id="stat-remaining">Gjenstår: 92</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress" style="width: 0%"></div>
+      </div>
+    </header>
+
+    <div class="chapter-filter" id="chapters"></div>
+
+    <div id="game-screen">
+      <div class="flashcard-container">
+        <div class="flashcard" id="card" onclick="flipCard()">
+          <div class="card-label" id="card-chapter">KAP 1</div>
+          <div class="card-number" id="card-number">1 / 92</div>
+          <div class="card-front" id="card-front">Spørsmål?</div>
+          <div class="card-back hidden" id="card-back">Svar</div>
+          <div class="hint" id="hint">Trykk Space eller klikk for å se svar</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="btn-no" onclick="markWrong()">✗ Kan ikke (Q)</button>
+        <button class="btn-skip" onclick="skipCard()">⊘ Hopp over</button>
+        <button class="btn-yes" onclick="markCorrect()">✓ Kan det (E)</button>
+      </div>
+    </div>
+
+    <div id="finish-screen" class="finish-screen hidden">
+      <h2>✨ Runde ferdig!</h2>
+      <div class="finish-stats">
+        <div class="stat-box">
+          <div class="stat-number" id="finish-correct">0</div>
+          <div class="stat-label">Beherska</div>
+        </div>
+        <div class="stat-box red">
+          <div class="stat-number" id="finish-wrong">0</div>
+          <div class="stat-label">Å øve på</div>
+        </div>
+      </div>
+      <button class="btn-yes" onclick="resetRound()" style="margin-right: 12px;">Øv på feil-kortene</button>
+      <button class="btn-skip" onclick="resetAllCards()">Start på nytt</button>
+    </div>
+  </div>
+
+  <script>
+    const allCards = [
+      // KAP 1/2/16 - Verdigrunnlag (14)
+      { id: 1, chapter: "Verdigrunnlag", q: "Nevn 3 verdier til NIF sin langtidsplan 2023-2027", a: "<strong>Mestring, Fellesskap og ærlighet</strong>" },
+      { id: 2, chapter: "Verdigrunnlag", q: "Hva er aktivitetsverdiene til NIF?", a: "<strong>Helse, fellesskap, idrettsglede og ærlighet</strong>" },
+      { id: 3, chapter: "Verdigrunnlag", q: "Hva er organisasjonsverdiene til NIF?", a: "<strong>Frivillighet, likeverd, demokrati og lojalitet</strong>" },
+      { id: 4, chapter: "Verdigrunnlag", q: "Hva betyr moral og etikk?", a: "<strong>Moral:</strong> hva som er rett og galt. <strong>Etikk:</strong> refleksjon og diskusjon om rett/galt og hvordan vi handler." },
+      { id: 5, chapter: "Verdigrunnlag", q: "Hva betyr egenverdi?", a: "At du driver med idrett for aktiviteten i seg selv gir deg glede (idrettsglede – glemmer alt annet)." },
+      { id: 6, chapter: "Verdigrunnlag", q: "Hva betyr nytteverdi?", a: "At du driver med idrett fordi det finnes verdier utenfor aktiviteten: resultater, helse, status, penger, sponsorer osv." },
+      { id: 7, chapter: "Verdigrunnlag", q: "Hva er formell fair play?", a: "<strong>Følg reglene i idretten!</strong>" },
+      { id: 8, chapter: "Verdigrunnlag", q: "Hva er uformell fair play?", a: "<strong>Gjør ditt beste uansett!</strong>" },
+      { id: 9, chapter: "Verdigrunnlag", q: "Hvem utøver man fair play mot?", a: "<strong>Medspillere, motspillere, trenere, dommere, publikum</strong>" },
+      { id: 10, chapter: "Verdigrunnlag", q: "Hva er utilsiktede regelbrudd?", a: "Brudd på reglene pga uflaks eller mangel på ferdighet, uten mål om å få en fordel." },
+      { id: 11, chapter: "Verdigrunnlag", q: "Hva er tilsiktede regelbrudd?", a: "Utøveren jukser, filmer eller gjør profesjonelle feil for å gi seg selv/laget en fordel." },
+      { id: 12, chapter: "Verdigrunnlag", q: "Hva er doping?", a: "Bruk av antatt prestasjonsfremmende midler og metoder som er forbudt i idrett." },
+      { id: 13, chapter: "Verdigrunnlag", q: "Hva er Antidoping Norge?", a: "Jobber for ren idrett og dopingfritt samfunn (ADNO)." },
+      { id: 14, chapter: "Verdigrunnlag", q: "Hva er WADA?", a: "World Anti Doping Agency – jobber for å holde doping ute av idretten globalt." },
+
+      // KAP 9 - Barne/ungdomsidrett (7)
+      { id: 15, chapter: "Barne- og ungdomsidrett", q: "Hva går bestemmelsene om barneidretten ut på?", a: "Barneidretten er til og med året barnet fyller 12 år. Konkurranseregler: 6 år (lokalt), 9 år (regionalt), 11 år (norden), 12 år (NM/EM/VM)." },
+      { id: 16, chapter: "Barne- og ungdomsidrett", q: "Hva er de 8 punktene i idrettens barnerettigheter?", a: "<strong>Trygghet, Vennskap og trivsel, Mestring, Frihet til å velge, Konkurranse for alle, På barns premisser, Alle skal få være med på leken</strong>" },
+      { id: 17, chapter: "Barne- og ungdomsidrett", q: "Hva er retningslinjene for ungdomsidretten?", a: "<strong>Aktivitet, Utdanning og Idrettslaget</strong>" },
+      { id: 18, chapter: "Barne- og ungdomsidrett", q: "Hva er sosialisering prosessen?", a: "Flere grupper påvirker om en starter med idrett: <strong>Primærgruppen</strong> (foreldre, søsken, besteforeldre, venner), <strong>Sekundærgruppen</strong> (trenere, lærere, venner), <strong>Referansegruppen</strong> (forbilder)." },
+      { id: 19, chapter: "Barne- og ungdomsidrett", q: "Forklar frafall innenfor og utenfor idretten", a: "<strong>Innenfor:</strong> Skader, økende konkurranse, stress, kostbart. <strong>Utenfor:</strong> Flere fritidstilbud, skole/jobb, PC/gaming/sosiale medier." },
+      { id: 20, chapter: "Barne- og ungdomsidrett", q: "Hva er idrett og sosial ulikhet?", a: "Ulikhet i grupper (utdanning, økonomi). Foreldre med lang utdanning og høy lønn har barn som driver med idrett." },
+      { id: 21, chapter: "Barne- og ungdomsidrett", q: "Hva kan forsterke sosial ulikhet?", a: "Barn i idrett får: bedre kroppsbilde, høyere karakterer, økt status, lærer verdier, og høyere sannsynlighet for mosjon som voksen." },
+
+      // KAP 4 - Organisering (8)
+      { id: 22, chapter: "Organisering", q: "Hva heter den største frivillige sektoren i Norge?", a: "<strong>NIF – Norges Idrettsforbund</strong>. Ideelle målsetninger, frivillig medlemskap, demokratisk styringsstruktur, sosial tilhørighet." },
+      { id: 23, chapter: "Organisering", q: "Hva ligger under sentralt nivå?", a: "<strong>Idrettstinget, Idrettsstyret og Særforbund (55 stk)</strong>" },
+      { id: 24, chapter: "Organisering", q: "Hvor mange medlemmer er det i idrettsstyret og hvem er presidenten?", a: "<strong>13 medlemmer. President: Zaineb Al-Samari</strong>" },
+      { id: 25, chapter: "Organisering", q: "Hva ligger under regionalt nivå?", a: "<strong>Idrettskretser (12 – ett per fylke) og Særkretser (ca. 170)</strong>" },
+      { id: 26, chapter: "Organisering", q: "Hva ligger under lokalt nivå?", a: "<strong>Kommunen (Idrettslagene og Idrettsråd)</strong>" },
+      { id: 27, chapter: "Organisering", q: "Hva er hovedoppgavene til idrettsrådene?", a: "Samordner idrettsaktivitet, samarbeider med kommunen, fordeler idrettsanlegg. <strong>328 idrettsråd i Norge.</strong>" },
+      { id: 28, chapter: "Organisering", q: "Hva er et fleridrettslag?", a: "Organiserer aktiviteter i flere idrettsgrener (f.eks. fotball, langrenn og trim)." },
+      { id: 29, chapter: "Organisering", q: "Hva er en særidrett?", a: "En enkelt idrett organiseres på flere nivåer." },
+
+      // KAP 11 - OL (6)
+      { id: 30, chapter: "Olympiske leker", q: "Nevn viktige årstall og utviklingen av OL", a: "<strong>1896:</strong> Første moderne OL (Athen). <strong>1912:</strong> Stockholm. <strong>1924:</strong> Første vinter-OL (Chamonix). <strong>1936:</strong> Berlin (TV). <strong>1984:</strong> Los Angeles (kommersialisme)." },
+      { id: 31, chapter: "Olympiske leker", q: "Hvem er initiativtakeren til OL og hvilke verdier ønsket han?", a: "<strong>Pierre de Coubertin</strong> fra engelsk kostskole og antikken: idrett for moralsk oppdragelse, egenverdi, viljestyrke, ærlighet, samarbeid, fokus på innsats, internasjonal fred, sterke kulturopplevelser." },
+      { id: 32, chapter: "Olympiske leker", q: "Hva er viktige kjennetegn ved OL?", a: "Hvert 4. år, Fakkelstaffetten, OL ilden, Åpnings-/Avslutningssermoni, 16 dager, Sommer- og Vinter-OL, IOKs regelbok, 5 ringer, Fredsduene, Utøvere fra hele verden." },
+      { id: 33, chapter: "Olympiske leker", q: "Nevn 4 positive sider ved OL", a: "<strong>1.</strong> Allsidige utøvere som forbilder. <strong>2.</strong> Dyp interesse fra utøvere/trenere/ledere. <strong>3.</strong> Opplevelse av felleskap og positiv patriotisme. <strong>4.</strong> Positiv betydning i større politisk sammenheng." },
+      { id: 34, chapter: "Olympiske leker", q: "Hva kan være utfordringene med OL i fremtiden?", a: "<strong>1.</strong> Virkeligheten stemmer dårlig med idealene. <strong>2.</strong> Gigantisme (flere utøvere, land, konkurranser). <strong>3.</strong> Miljø. <strong>4.</strong> Demokrati. <strong>5.</strong> Juks." },
+      { id: 35, chapter: "Olympiske leker", q: "Hva skiller OL i Paris 2024 fra andre OL?", a: "Mest bærekraftige sommer-OL, Gjenbruk av eksisterende anlegg, Mindre CO2, Grønn teknologi (kollektiv transport, pappsenger), Åpningssermoni med fokus på mangfold og inkludering." },
+
+      // KAP 12 - Medier (8)
+      { id: 36, chapter: "Medier og idrett", q: "Hva er definisjonen av massemedier?", a: "Midler som et relativt lite antall mennesker bruker for å formidle budskap raskt og direkte til en stor del av befolkningen." },
+      { id: 37, chapter: "Medier og idrett", q: "Beskriv den historiske utviklingen av medier", a: "<strong>1400:</strong> Boktrykkerkunsten (Gutenberg). <strong>1700:</strong> Første aviser. <strong>1800:</strong> Magasiner. <strong>1920:</strong> Sportsmanden. <strong>1925:</strong> Holmenkollrennene på radio. <strong>1948:</strong> TV BBC. <strong>1970:</strong> Fargetv. <strong>1981:</strong> Flere kanaler. <strong>1990:</strong> Internett. <strong>Nå:</strong> Streaming, mobil, influensere." },
+      { id: 38, chapter: "Medier og idrett", q: "Hva er personifisering?", a: "Ensidig fokus på enkeltpersoner (toppidrettsutøveren) og deres handlinger. Kan føre til seksualisering og dramatisering for flere klikk." },
+      { id: 39, chapter: "Medier og idrett", q: "Hva er symbiose og hvordan er idrett og medier i et symbiotisk forhold?", a: "To eller flere parter samarbeider. Idrett og medier er symbiotisk: begge tjener på hverandre gjennom gjensidig avhengighet." },
+      { id: 40, chapter: "Medier og idrett", q: "Hvilke spørsmål bør en stille når det gjelder falsk eller ekte sak?", a: "<strong>STOPP! TENK! SJEKK!</strong> Vekker sterke følelser? Virker utrolig? Tror du på bildet? Prøver den å påvirke deg? Finner du det andre steder? Hvem står bak?" },
+      { id: 41, chapter: "Medier og idrett", q: "Hvilke 3 hovedfunksjoner har massemediene?", a: "<strong>1.</strong> Informasjon – spre kunnskap. <strong>2.</strong> Underholde. <strong>3.</strong> Formidle verdier." },
+      { id: 42, chapter: "Medier og idrett", q: "Hva kjennetegner idrett i media?", a: "Mye makt og eierskap, Toppidrett dominerer, Mannsdominert (70% menn), 50% av sportssendinger = Fotball." },
+      { id: 43, chapter: "Medier og idrett", q: "Forklar massemedienes betydning for idretten", a: "<strong>Nytteverdi:</strong> Penger/sponsorinntekter. <strong>Gjensidig avhengighet:</strong> VG sponser hopplandslaget, TV2 dekker OL. <strong>Gjøre idretten severdig:</strong> Straffekonkurranse, gul tennisball, sendetidspunkter." },
+
+      // KAP 13 - Helse (9)
+      { id: 44, chapter: "Fysisk aktivitet og helse", q: "Hvordan påvirker fysisk aktivitet helsen din?", a: "Styrker hjerte, lunger, muskler. Reduserer risiko for hjerte-/karsykdom og diabetes. Bedre søvn, energi, humør, selvfølelse. Forebygger stress, angst, depresjon." },
+      { id: 45, chapter: "Fysisk aktivitet og helse", q: "Hva er forskjell på symbolverdi og nytteverdi?", a: "<strong>Symbolverdi:</strong> Kroppen som symbol (se bra ut). <strong>Nytteverdi:</strong> Bruke kroppen aktivt for arbeid, inntekt, overlevelse." },
+      { id: 46, chapter: "Fysisk aktivitet og helse", q: "Hva er definisjonen av psykisk helse?", a: "Tilstand knyttet til trivsel, opplevelse av mestring og mulighet til å realisere våre talenter og gode felleskap." },
+      { id: 47, chapter: "Fysisk aktivitet og helse", q: "Hva er definisjonen av god helse ifølge WHO?", a: "«Helse er ikke bare fravær fra sykdom og lidelse, men fullkomment kroppslig, mentalt og sosialt velvære». <strong>Problem:</strong> Vanskelig å oppnå; personer i rullestol kan umulig ha god helse etter denne definisjonen." },
+      { id: 48, chapter: "Fysisk aktivitet og helse", q: "Hva er idrettens positive og negative konsekvenser på helsa?", a: "<strong>Positiv:</strong> Muskler, hjerne, hjerte, forebygging, mental helse, sosialt, selvtillit. <strong>Negativ:</strong> Prestasjonspress, angst, depresjon, overtrening, kroppspress, spiseforstyrrelser, doping." },
+      { id: 49, chapter: "Fysisk aktivitet og helse", q: "Hva er verdenes antidopings byrå (WADA) sin oppgave?", a: "Koordinere og overvåke det internasjonale antidopingarbeidet. WADA-koden skaper samarbeid av antidopingsregler på tvers av idretter og land." },
+      { id: 50, chapter: "Fysisk aktivitet og helse", q: "Hva er det salutogene perspektivet?", a: "Se god helse som opplevelse av mestring og av meningen og sammenhengen i livet. <strong>Gjelder alle</strong> (ikke bare «friske»)." },
+      { id: 51, chapter: "Fysisk aktivitet og helse", q: "Hva er det patogene perspektivet?", a: "Forstå sykdom/lidelse og utvikle behandling. De som er syke eller har utfordringer som påvirker livet negativt har ikke bra nok helse." },
+      { id: 52, chapter: "Fysisk aktivitet og helse", q: "Hva innebærer det å jobbe for helsefremmede aktivitet?", a: "Legge til rette for aktivitet, mestring, trivsel og sunne vaner som gir bedre helse." },
+
+      // KAP 10/14 - Kjønn/kropp (9)
+      { id: 53, chapter: "Kjønnsroller og kroppssyn", q: "Hva er dualistisk og holistisk menneskesyn?", a: "<strong>Dualistisk:</strong> Mennesket består av kropp og sjel som er adskilt. <strong>Holistisk:</strong> Mennesket er en helhet der kropp, tanker og følelser henger sammen." },
+      { id: 54, chapter: "Kjønnsroller og kroppssyn", q: "Hva menes med kroppen som statussymbol?", a: "Kroppen kan vise status i samfunnet: helse, penger, livsstil, sosial tilhørighet." },
+      { id: 55, chapter: "Kjønnsroller og kroppssyn", q: "Hva er en kjønnsrolle?", a: "Forventinger og krav som er knyttet til ulike kjønn i samfunnet." },
+      { id: 56, chapter: "Kjønnsroller og kroppssyn", q: "Hvilke idretter driver hovedsakelig jenter og gutter med?", a: "<strong>Jenter:</strong> Håndball, Cheerleading, Gymnastikk/dans, Ridning. <strong>Gutter:</strong> Fotball, Kampsport, Hockey/bandy, Basketball/volleyball." },
+      { id: 57, chapter: "Kjønnsroller og kroppssyn", q: "Hva er et kroppsideal?", a: "En forestilling på hvordan kroppen skal se ut – den perfekte kroppen. Sosiale medier påvirker sterkt." },
+      { id: 58, chapter: "Kjønnsroller og kroppssyn", q: "Forklar menneskesynet i antikken, middelalderen, renessansen og moderne tid", a: "<strong>Antikken:</strong> Dualistisk. <strong>Middelalderen:</strong> Dualistisk (fokus på sjel). <strong>Renessansen:</strong> Mer holistisk. <strong>Moderne:</strong> Både dualistisk og holistisk." },
+      { id: 59, chapter: "Kjønnsroller og kroppssyn", q: "Hva menes med kroppspositivisme?", a: "Akseptere og verdsette kroppen sin slik den er. Motvirke urealistiske skjønnhetsidealer. Oppfordre selvaksept og respekt for alle kropper." },
+      { id: 60, chapter: "Kjønnsroller og kroppssyn", q: "Hvilke spiseforstyrrelser kan man utvikle?", a: "<strong>Anoreksi, Bulimi, Overspisingslidelse</strong>" },
+      { id: 61, chapter: "Kjønnsroller og kroppssyn", q: "Hvilke utfordringer står idretten ovenfor når det gjelder kjønn og konkurranse?", a: "Transpersoner møter store utfordringer (spesielt menn som har byttet til kvinne). Høyere testosteronnivå gir prestasjonsfordel. Må ta medisiner eller ikke konkurrere." },
+
+      // KAP 2/3 - Idrettshistorie (11)
+      { id: 62, chapter: "Idrettshistorie", q: "Hvordan har synet på idretten vært med tanke på egenverdi og nytteverdi?", a: "<strong>Tidligere:</strong> Nytteverdi først (helse, soldater). <strong>Egenverdi kom først,</strong> nytteverdi sekundær. <strong>I dag:</strong> Egenverdi viktig for bredde, nytteverdi også viktig (folkehelse, verdier, materielle verdier høyere opp)." },
+      { id: 63, chapter: "Idrettshistorie", q: "Hva er Centralforeningen og hvorfor ble det opprettet?", a: "Norges første landsomfattende idrettsorganisering (1861). Opprettet for å fremme skyttersaken (gode skyttere som soldater). Motto: «Værg ditt land!»" },
+      { id: 64, chapter: "Idrettshistorie", q: "Hvilke idretter opprettet særforbund først?", a: "<strong>Gymnastikk, Ski, Skyting, Svømming, Skøyter</strong>" },
+      { id: 65, chapter: "Idrettshistorie", q: "Hva menes med Riksforbundet og Landsforbundet?", a: "<strong>Riksforbundet (1910):</strong> Samle flere idretter, utvikle konkurranseidrett. <strong>Landsforbundet (1919):</strong> Organisere idretten bedre, styrke samarbeid. Grunnlaget for senere organisering." },
+      { id: 66, chapter: "Idrettshistorie", q: "Arbeidernes idrettsforbund (AIF) ble opprettet i 1924 – hvorfor?", a: "Arbeiderklassen opplevde ikke å ha naturlig plass i eksisterende organisasjoner. AIF fokuserte på felleskap, solidaritet, like muligheter, breddeidrett og sosialt samhold (ikke ren prestasjon)." },
+      { id: 67, chapter: "Idrettshistorie", q: "NIF ble opprettet i hva og hvorfor?", a: "<strong>1946</strong> etter Andre verdenskrig. Før krigen var idretten delt (AIF og borgerlige forbund). Etter krigen ønsket man å samle idretten i én organisasjon for bedre samarbeid og enhetlig struktur." },
+      { id: 68, chapter: "Idrettshistorie", q: "Hva gjorde STUI (Rolf Hofmo)?", a: "<strong>STUI = Statens ungdoms- og idrettskontor (1946).</strong> Rolf Hofmo ledet arbeidernes idrettsbevegelse. Sto for bredt idrettstilbud til folk flest, folkehelse og sosialistisk skolering." },
+      { id: 69, chapter: "Idrettshistorie", q: "Stagnasjon i idretten – hvorfor skjedde dette (1950–1965)?", a: "Medlemstall stabil på ~500 000 (1 av 10 voksne). Årsaker: ungdommens dårlige holdning, mangel på penger, tillitsmannskrise, dårlig samarbeid mellom NIF/STUI/særforbund, urbanisering." },
+      { id: 70, chapter: "Idrettshistorie", q: "Idrettsrevolusjonen – hvilke faktorer påvirket medlemsøkningen (1965–1985)?", a: "Medlemmer steg fra 430 000 til 1,6 millioner. <strong>Faktorer:</strong> Nye idretter, større ressurser, flere aktive, Trim-aksjonen, opprettelsen av NIF som ansvarlig for bredde- og toppnivå." },
+      { id: 71, chapter: "Idrettshistorie", q: "Hvorfor ble Olympiatoppen opprettet?", a: "Stiftet i 1988 på grunn av svake resultater på 80-tallet (spesielt vinter-OL 1984). Skal profesjonalisere norsk toppidrett, gi utøvere/forbund bedre støtte (helse, ernæring, treningsteknologi)." },
+      { id: 72, chapter: "Idrettshistorie", q: "Hvorfor kom barne- og ungdomsbestemmelsene?", a: "Prioritere barnets beste og sikre trygg, inkluderende og utviklende idrett uten for mye konkurransepress." },
+
+      // KAP 5/6 - Idrettsanlegg (7)
+      { id: 73, chapter: "Idrettsanlegg", q: "Hvilke ulike typer idrettsanlegg finnes?", a: "<strong>Klassifisering:</strong> Nærmiljøanlegg, Ordinære anlegg, Nasjonalanlegg. <strong>Andre:</strong> Sommer/vinter, Inne/ute, Flerbruk/spesial." },
+      { id: 74, chapter: "Idrettsanlegg", q: "Hvordan planlegger man et idrettsanlegg?", a: "<strong>1.</strong> Kontakt kommunen, registrer i anleggsregisteret. <strong>2.</strong> Oppføring i kommunens plan. <strong>3.</strong> Innsending av spillemiddelsøknad (Kulturdepartementet fordeler). <strong>4.</strong> Fylket innvilger/avslår." },
+      { id: 75, chapter: "Idrettsanlegg", q: "Hvor mange anlegg finnes i Norge?", a: "<strong>Over 15 000 idrettsanlegg og over 50 000 anlegg for ikke-organisert aktivitet.</strong>" },
+      { id: 76, chapter: "Idrettsanlegg", q: "Hva gjør Tverga?", a: "Ressurssenteret for organisert idrett og fysisk aktiviteter i Norge. Gir støtte og veiledning til å bygge møteplasser." },
+      { id: 77, chapter: "Idrettsanlegg", q: "Utfordringer innenfor anlegg i Norge", a: "Nasjonalanlegg trenger infrastruktur (parkering, kafeer, overnattingssteder) som tar stor areal og skader naturen. Friluftsliv kan føre til mer avfall." },
+      { id: 78, chapter: "Idrettsanlegg", q: "Hvordan kan idrettsanlegg bli mer bærekraftig?", a: "Spare energi og vann, bruke miljøvennlige materialer, redusere avfall, legge til rette for kollektivtransport." },
+      { id: 79, chapter: "Idrettsanlegg", q: "Hvordan påvirker idrettsanleggene samfunnet vårt?", a: "Skaper møteplasser som styrker felleskap og lokal identitet. Kan føre til konflikter om arealbruk, kostnader og miljøhensyn." },
+
+      // KAP 15 - Bærekraft (5)
+      { id: 80, chapter: "Bærekraft og økologi", q: "FNs bærekraftsmål – hvor mange og hva skal de oppfordre verden til?", a: "<strong>17 mål.</strong> Skal oppfordre til: Utydde fattigdom, bekjempe ulikhet, stoppe klimaendringer, sikre bærekraftig utvikling innen 2030." },
+      { id: 81, chapter: "Bærekraft og økologi", q: "Hvilke 3 dimensjoner snakker vi om innenfor bærekraft?", a: "<strong>1. Miljømessig:</strong> Ta vare på natur og klima. <strong>2. Sosial:</strong> Gode levekår, helse, rettferdighet. <strong>3. Økonomisk:</strong> Ansvarlig bruk av ressurser og vekst." },
+      { id: 82, chapter: "Bærekraft og økologi", q: "Hvordan kan toppidretten bli mer bærekraftig?", a: "Dempe fokus på kvantitativ vekst, satse på kvalitativ vekst, ta hensyn til miljø, mennesker og ressursbruk." },
+      { id: 83, chapter: "Bærekraft og økologi", q: "Hvordan kan idrettsindustrien bli mer bærekraftig?", a: "Mindre klimautslipp (kollektivtransport), Grønnere arrangementer (mindre plast, resirkulering), Gjenbruk av anlegg og utstyr, Flerfunksjonsjonelle haller." },
+      { id: 84, chapter: "Bærekraft og økologi", q: "Hvordan jobbe bærekraftig innenfor friluftsliv og anlegg?", a: "Ta vare på naturen, Bruke mindre energi og ressurser, Skape aktivitet med minst mulig miljøpåvirkning." },
+
+      // KAP 7/8 - Idrettspolitikk (8)
+      { id: 85, chapter: "Idrettspolitikk", q: "Hva er politikk?", a: "Alt folk gjør for å bestemme hvordan ressurser og rettigheter skal fordeles i en gruppe eller samfunn. Finnes i alle samfunn fordi folk må samarbeide og ta beslutninger." },
+      { id: 86, chapter: "Idrettspolitikk", q: "Hva menes med pengestrømmer i idrett og samfunn?", a: "Hvordan penger beveger seg fra kilder til idretten: medlemsavgifter, sponsorer, tippemidler (Norsk Tipping), offentlig støtte. Brukes til drift, lønn, utstyr, idrettsanlegg." },
+      { id: 87, chapter: "Idrettspolitikk", q: "Kom med flere eksempler på idrett som verdiskaper i samfunnet", a: "<strong>Sosial inkludering:</strong> Lavterskeltilbud, fritidskort. <strong>Integrering:</strong> Flyktninger og innvandrere. <strong>Paraidrett:</strong> Tilrettelegging for funksjonsnedsettelser. <strong>Jenteløft:</strong> Flere jenter i mannsdominerte idretter." },
+      { id: 88, chapter: "Idrettspolitikk", q: "Hva menes med enerettsmodellen?", a: "Norsk Tipping har rett til å drive alle pengespill. KUD har ansvar for at Norsk Tipping driver ansvarlig og forebygger problematisk spilleratferd. NIF ser det som sikrest og mest ansvarlig." },
+      { id: 89, chapter: "Idrettspolitikk", q: "Hvilke idrettspolitiske føringer jobber NIF med?", a: "NIF er frivillig sektor (tredje sektor). Ikke partipolitiske. Skal arbeide for at alle mennesker gis mulighet til å utøve idrett ut fra sine ønsker og behov. Ansvaret for fordeling av Norsk Tipping-overskudd." },
+      { id: 90, chapter: "Idrettspolitikk", q: "Lag en liten oversikt over NIF sine inntekter", a: "<strong>Idrettens egne inntekter:</strong> 58%. <strong>Kommune/fylkeskommune:</strong> 22%. <strong>Norsk Tipping:</strong> 16%. <strong>Statsbudsjett:</strong> 4%." },
+      { id: 91, chapter: "Idrettspolitikk", q: "Hvordan får idrettslagene inntekter?", a: "<strong>50% fra:</strong> Dugnad, arrangementer, anlegg, sponsing. <strong>Nest viktigste:</strong> Medlemsavgifter. <strong>Deretter:</strong> Offentlig støtte (spillemidler, kommune)." },
+      { id: 92, chapter: "Idrettspolitikk", q: "Frivilligheten og dugnad i idretten – hvorfor er det viktig?", a: "Utgjør mye av inntektene. Bygger felleskap rundt lag/klubben. Gjør at medlemskongenter og treningsavgifter kan være lavere, så flere barn og unge har råd til å delta." }
+    ];
+
+    let currentDeck = [...allCards];
+    let currentIndex = 0;
+    let learned = [];
+    let wrong = [];
+    let isFlipped = false;
+    let selectedChapter = null;
+
+    function init() {
+      renderChapters();
+      loadProgress();
+      showNextCard();
+    }
+
+    function renderChapters() {
+      const chapters = [...new Set(allCards.map(c => c.chapter))].sort();
+      const container = document.getElementById('chapters');
+
+      const allChip = document.createElement('button');
+      allChip.className = 'chip active';
+      allChip.textContent = '📚 Alle';
+      allChip.onclick = () => filterChapter(null);
+      container.appendChild(allChip);
+
+      chapters.forEach(ch => {
+        const btn = document.createElement('button');
+        btn.className = 'chip';
+        btn.textContent = ch;
+        btn.onclick = () => filterChapter(ch);
+        container.appendChild(btn);
+      });
+    }
+
+    function filterChapter(chapter) {
+      selectedChapter = chapter;
+      currentDeck = chapter ? allCards.filter(c => c.chapter === chapter) : [...allCards];
+      currentIndex = 0;
+      learned = [];
+      wrong = [];
+      isFlipped = false;
+
+      document.querySelectorAll('.chip').forEach((chip, idx) => {
+        chip.classList.toggle('active',
+          (idx === 0 && !chapter) ||
+          (chapter && chip.textContent === chapter)
+        );
+      });
+
+      showNextCard();
+    }
+
+    function showNextCard() {
+      if (currentIndex >= currentDeck.length) {
+        finishRound();
+        return;
+      }
+
+      const card = currentDeck[currentIndex];
+      document.getElementById('card-front').innerHTML = card.q;
+      document.getElementById('card-back').innerHTML = card.a;
+      document.getElementById('card-chapter').textContent = card.chapter.toUpperCase();
+      document.getElementById('card-number').textContent = `${currentIndex + 1} / ${currentDeck.length}`;
+      document.getElementById('card').classList.remove('flipped');
+      document.getElementById('card-back').classList.add('hidden');
+      document.getElementById('hint').classList.remove('hidden');
+      isFlipped = false;
+
+      updateStats();
+    }
+
+    function flipCard() {
+      isFlipped = !isFlipped;
+      document.getElementById('card').classList.toggle('flipped');
+      document.getElementById('card-front').classList.toggle('hidden');
+      document.getElementById('card-back').classList.toggle('hidden');
+      document.getElementById('hint').textContent = isFlipped ? '✓ Markér med Q eller E' : 'Trykk Space eller klikk for å se svar';
+    }
+
+    function markCorrect() {
+      if (!isFlipped) flipCard();
+      learned.push(currentDeck[currentIndex].id);
+      currentIndex++;
+      setTimeout(showNextCard, 200);
+    }
+
+    function markWrong() {
+      if (!isFlipped) flipCard();
+      wrong.push(currentDeck[currentIndex].id);
+      currentIndex++;
+      setTimeout(showNextCard, 200);
+    }
+
+    function skipCard() {
+      currentIndex++;
+      showNextCard();
+    }
+
+    function updateStats() {
+      const total = currentDeck.length;
+      const done = currentIndex;
+      document.getElementById('stat-current').textContent = `Kort ${done + 1} / ${total}`;
+      document.getElementById('stat-learned').textContent = `Lært: ${learned.length}`;
+      document.getElementById('stat-remaining').textContent = `Gjenstår: ${total - done}`;
+      document.getElementById('progress').style.width = ((done / total) * 100) + '%';
+    }
+
+    function finishRound() {
+      document.getElementById('game-screen').classList.add('hidden');
+      document.getElementById('finish-screen').classList.remove('hidden');
+      document.getElementById('finish-correct').textContent = learned.length;
+      document.getElementById('finish-wrong').textContent = wrong.length;
+      saveProgress();
+    }
+
+    function resetRound() {
+      if (wrong.length > 0) {
+        currentDeck = allCards.filter(c => wrong.includes(c.id));
+        currentIndex = 0;
+        learned = [];
+        wrong = [];
+        isFlipped = false;
+        document.getElementById('game-screen').classList.remove('hidden');
+        document.getElementById('finish-screen').classList.add('hidden');
+        showNextCard();
+      }
+    }
+
+    function resetAllCards() {
+      learned = [];
+      wrong = [];
+      currentIndex = 0;
+      isFlipped = false;
+      currentDeck = selectedChapter ? allCards.filter(c => c.chapter === selectedChapter) : [...allCards];
+      document.getElementById('game-screen').classList.remove('hidden');
+      document.getElementById('finish-screen').classList.add('hidden');
+      showNextCard();
+    }
+
+    function saveProgress() {
+      localStorage.setItem('learned', JSON.stringify(learned));
+      localStorage.setItem('wrong', JSON.stringify(wrong));
+    }
+
+    function loadProgress() {
+      const saved = localStorage.getItem('learned');
+      if (saved) learned = JSON.parse(saved);
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') { e.preventDefault(); flipCard(); }
+      if (e.key === 'q' || e.key === 'Q') markWrong();
+      if (e.key === 'e' || e.key === 'E') markCorrect();
+      if (e.key === 'ArrowLeft') skipCard();
+      if (e.key === 'ArrowRight') skipCard();
+    });
+
+    init();
+  </script>
+</body>
+</html>
