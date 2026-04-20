@@ -364,6 +364,122 @@
       font-style: italic;
     }
 
+    .status-filter {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+      justify-content: center;
+    }
+    .status-chip {
+      padding: 6px 12px;
+      border: 2px solid #333;
+      background: transparent;
+      color: #bbb;
+      border-radius: 16px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+    .status-chip:hover { border-color: #61dafb; }
+    .status-chip.active { background: #2d2d3d; color: #fff; }
+    .status-chip.active[data-status="alle"] { border-color: #61dafb; }
+    .status-chip.active[data-status="kan"] { border-color: #39ff14; color: #39ff14; }
+    .status-chip.active[data-status="kan-ikke"] { border-color: #ff4757; color: #ff4757; }
+    .status-chip.active[data-status="hoppet"] { border-color: #ffa502; color: #ffa502; }
+    .status-chip.active[data-status="ikke-svart"] { border-color: #888; color: #ccc; }
+
+    .overview-btn {
+      display: block;
+      margin: 0 auto 20px;
+      background: transparent;
+      color: #61dafb;
+      border: 2px solid #61dafb;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+    .overview-btn:hover { background: rgba(97, 218, 251, 0.1); }
+
+    #overview-screen h2 { text-align: center; color: #61dafb; margin-bottom: 16px; }
+    .overview-summary {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .overview-summary-box {
+      background: #2d2d3d;
+      padding: 14px 10px;
+      border-radius: 8px;
+      text-align: center;
+      border-top: 3px solid #888;
+    }
+    .overview-summary-box.kan { border-top-color: #39ff14; }
+    .overview-summary-box.kan-ikke { border-top-color: #ff4757; }
+    .overview-summary-box.hoppet { border-top-color: #ffa502; }
+    .overview-summary-box.ikke-svart { border-top-color: #888; }
+    .overview-summary-num { font-size: 22px; font-weight: bold; color: #fff; }
+    .overview-summary-label { font-size: 11px; color: #aaa; text-transform: uppercase; margin-top: 2px; }
+
+    .overview-group-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin: 20px 0 10px;
+      padding: 8px 12px;
+      border-radius: 6px;
+    }
+    .overview-group-title.kan { background: rgba(57, 255, 20, 0.12); color: #39ff14; }
+    .overview-group-title.kan-ikke { background: rgba(255, 71, 87, 0.12); color: #ff4757; }
+    .overview-group-title.hoppet { background: rgba(255, 165, 2, 0.12); color: #ffa502; }
+    .overview-group-title.ikke-svart { background: rgba(136, 136, 136, 0.12); color: #bbb; }
+
+    .overview-card {
+      background: #2d2d3d;
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 10px;
+      border-left: 4px solid #888;
+    }
+    .overview-card.kan { border-left-color: #39ff14; }
+    .overview-card.kan-ikke { border-left-color: #ff4757; }
+    .overview-card.hoppet { border-left-color: #ffa502; }
+    .overview-card-chapter {
+      font-size: 10px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+    .overview-card-q { font-size: 14px; color: #61dafb; margin-bottom: 8px; font-weight: 500; line-height: 1.4; }
+    .overview-card-a { font-size: 13px; color: #ccc; line-height: 1.5; margin-bottom: 10px; }
+    .overview-card-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .overview-action-btn {
+      padding: 5px 10px;
+      font-size: 11px;
+      border-radius: 4px;
+      border: 1px solid #444;
+      background: #1a1a2e;
+      color: #ccc;
+      cursor: pointer;
+      text-transform: none;
+      letter-spacing: 0;
+      font-weight: 500;
+    }
+    .overview-action-btn:hover { border-color: #61dafb; }
+    .overview-action-btn.kan:hover { border-color: #39ff14; color: #39ff14; }
+    .overview-action-btn.kan-ikke:hover { border-color: #ff4757; color: #ff4757; }
+    .overview-action-btn.hoppet:hover { border-color: #ffa502; color: #ffa502; }
+    .overview-action-btn.clear:hover { border-color: #888; color: #ccc; }
+    .overview-empty { color: #666; font-style: italic; padding: 12px; text-align: center; }
+
     .hidden { display: none !important; }
 
     @media (max-width: 768px) {
@@ -396,6 +512,14 @@
     </div>
 
     <div class="chapter-filter" id="chapters"></div>
+    <div class="status-filter" id="status-filter">
+      <button class="status-chip active" data-status="alle" onclick="filterStatus(null)">Alle</button>
+      <button class="status-chip" data-status="kan-ikke" onclick="filterStatus('kan-ikke')">🔴 Kan ikke</button>
+      <button class="status-chip" data-status="kan" onclick="filterStatus('kan')">🟢 Kan</button>
+      <button class="status-chip" data-status="hoppet" onclick="filterStatus('hoppet')">⊘ Hoppet over</button>
+      <button class="status-chip" data-status="ikke-svart" onclick="filterStatus('ikke-svart')">⚪ Ikke svart</button>
+    </div>
+    <button class="overview-btn" id="overview-btn" onclick="showOverview()">📊 Se oversikt over alle kort</button>
 
     <div id="game-screen">
       <div class="flashcard-container">
@@ -449,6 +573,16 @@
       <div class="quiz-review" id="quiz-review-list"></div>
       <button class="btn-yes" onclick="startQuiz()" style="margin-right: 12px;">Ny prøve</button>
       <button class="btn-skip" onclick="switchMode('flashcard')">Tilbake til flashkort</button>
+    </div>
+
+    <div id="overview-screen" class="hidden">
+      <h2>📊 Oversikt</h2>
+      <div class="overview-summary" id="overview-summary"></div>
+      <div style="text-align:center; margin-bottom:16px;">
+        <button class="btn-skip" onclick="closeOverview()">← Tilbake</button>
+        <button class="btn-skip" onclick="clearAllProgress()" style="background:#5d2d2d; color:#ff8a8a; margin-left:8px;">🗑 Nullstill all fremgang</button>
+      </div>
+      <div id="overview-content"></div>
     </div>
 
     <div id="finish-screen" class="finish-screen hidden">
@@ -591,10 +725,31 @@
     let wrong = [];
     let isFlipped = false;
     let selectedChapter = null;
+    let selectedStatus = null;
+    let cardProgress = {};
 
     function init() {
-      renderChapters();
       loadProgress();
+      renderChapters();
+      rebuildDeck();
+    }
+
+    function getStatus(cardId) {
+      return cardProgress[cardId] || 'ikke-svart';
+    }
+
+    function rebuildDeck() {
+      let deck = selectedChapter ? allCards.filter(c => c.chapter === selectedChapter) : [...allCards];
+      if (selectedStatus) {
+        deck = deck.filter(c => getStatus(c.id) === selectedStatus);
+      }
+      currentDeck = deck;
+      currentIndex = 0;
+      learned = [];
+      wrong = [];
+      isFlipped = false;
+      document.getElementById('game-screen').classList.remove('hidden');
+      document.getElementById('finish-screen').classList.add('hidden');
       showNextCard();
     }
 
@@ -619,23 +774,38 @@
 
     function filterChapter(chapter) {
       selectedChapter = chapter;
-      currentDeck = chapter ? allCards.filter(c => c.chapter === chapter) : [...allCards];
-      currentIndex = 0;
-      learned = [];
-      wrong = [];
-      isFlipped = false;
-
       document.querySelectorAll('.chip').forEach((chip, idx) => {
         chip.classList.toggle('active',
           (idx === 0 && !chapter) ||
           (chapter && chip.textContent === chapter)
         );
       });
+      rebuildDeck();
+    }
 
-      showNextCard();
+    function filterStatus(status) {
+      selectedStatus = status;
+      document.querySelectorAll('.status-chip').forEach(chip => {
+        const chipStatus = chip.getAttribute('data-status');
+        const isActive = (status === null && chipStatus === 'alle') || chipStatus === status;
+        chip.classList.toggle('active', isActive);
+      });
+      rebuildDeck();
     }
 
     function showNextCard() {
+      if (currentDeck.length === 0) {
+        document.getElementById('card-front').innerHTML = '✨ Ingen kort i dette filteret';
+        document.getElementById('card-back').innerHTML = 'Prøv et annet filter.';
+        document.getElementById('card-chapter').textContent = '';
+        document.getElementById('card-number').textContent = '0 / 0';
+        document.getElementById('card').classList.remove('flipped');
+        document.getElementById('card-front').classList.remove('hidden');
+        document.getElementById('card-back').classList.add('hidden');
+        isFlipped = false;
+        updateStats();
+        return;
+      }
       if (currentIndex >= currentDeck.length) {
         finishRound();
         return;
@@ -665,19 +835,28 @@
 
     function markCorrect() {
       if (!isFlipped) flipCard();
-      learned.push(currentDeck[currentIndex].id);
+      const id = currentDeck[currentIndex].id;
+      cardProgress[id] = 'kan';
+      learned.push(id);
+      saveProgress();
       currentIndex++;
       setTimeout(showNextCard, 200);
     }
 
     function markWrong() {
       if (!isFlipped) flipCard();
-      wrong.push(currentDeck[currentIndex].id);
+      const id = currentDeck[currentIndex].id;
+      cardProgress[id] = 'kan-ikke';
+      wrong.push(id);
+      saveProgress();
       currentIndex++;
       setTimeout(showNextCard, 200);
     }
 
     function skipCard() {
+      const id = currentDeck[currentIndex].id;
+      cardProgress[id] = 'hoppet';
+      saveProgress();
       currentIndex++;
       showNextCard();
     }
@@ -685,10 +864,11 @@
     function updateStats() {
       const total = currentDeck.length;
       const done = currentIndex;
-      document.getElementById('stat-current').textContent = `Kort ${done + 1} / ${total}`;
-      document.getElementById('stat-learned').textContent = `Lært: ${learned.length}`;
-      document.getElementById('stat-remaining').textContent = `Gjenstår: ${total - done}`;
-      document.getElementById('progress').style.width = ((done / total) * 100) + '%';
+      const kan = Object.values(cardProgress).filter(s => s === 'kan').length;
+      document.getElementById('stat-current').textContent = total > 0 ? `Kort ${Math.min(done + 1, total)} / ${total}` : 'Ingen kort';
+      document.getElementById('stat-learned').textContent = `Kan totalt: ${kan} / ${allCards.length}`;
+      document.getElementById('stat-remaining').textContent = `I runde: ${Math.max(total - done, 0)}`;
+      document.getElementById('progress').style.width = total > 0 ? ((done / total) * 100) + '%' : '0%';
     }
 
     function finishRound() {
@@ -713,24 +893,105 @@
     }
 
     function resetAllCards() {
-      learned = [];
-      wrong = [];
-      currentIndex = 0;
-      isFlipped = false;
-      currentDeck = selectedChapter ? allCards.filter(c => c.chapter === selectedChapter) : [...allCards];
-      document.getElementById('game-screen').classList.remove('hidden');
-      document.getElementById('finish-screen').classList.add('hidden');
-      showNextCard();
+      rebuildDeck();
     }
 
     function saveProgress() {
-      localStorage.setItem('learned', JSON.stringify(learned));
-      localStorage.setItem('wrong', JSON.stringify(wrong));
+      localStorage.setItem('cardProgress', JSON.stringify(cardProgress));
     }
 
     function loadProgress() {
-      const saved = localStorage.getItem('learned');
-      if (saved) learned = JSON.parse(saved);
+      const saved = localStorage.getItem('cardProgress');
+      if (saved) {
+        try { cardProgress = JSON.parse(saved); } catch (e) { cardProgress = {}; }
+      }
+    }
+
+    function showOverview() {
+      document.getElementById('game-screen').classList.add('hidden');
+      document.getElementById('finish-screen').classList.add('hidden');
+      document.getElementById('chapters').classList.add('hidden');
+      document.getElementById('status-filter').classList.add('hidden');
+      document.getElementById('overview-btn').classList.add('hidden');
+      document.querySelector('.progress-bar').classList.add('hidden');
+      document.querySelector('.stats').classList.add('hidden');
+      document.getElementById('overview-screen').classList.remove('hidden');
+      renderOverview();
+    }
+
+    function closeOverview() {
+      document.getElementById('overview-screen').classList.add('hidden');
+      document.getElementById('chapters').classList.remove('hidden');
+      document.getElementById('status-filter').classList.remove('hidden');
+      document.getElementById('overview-btn').classList.remove('hidden');
+      document.querySelector('.progress-bar').classList.remove('hidden');
+      document.querySelector('.stats').classList.remove('hidden');
+      document.getElementById('game-screen').classList.remove('hidden');
+      showNextCard();
+    }
+
+    function renderOverview() {
+      const counts = { kan: 0, 'kan-ikke': 0, hoppet: 0, 'ikke-svart': 0 };
+      allCards.forEach(c => { counts[getStatus(c.id)]++; });
+
+      const summary = document.getElementById('overview-summary');
+      summary.innerHTML = `
+        <div class="overview-summary-box kan"><div class="overview-summary-num">${counts['kan']}</div><div class="overview-summary-label">🟢 Kan</div></div>
+        <div class="overview-summary-box kan-ikke"><div class="overview-summary-num">${counts['kan-ikke']}</div><div class="overview-summary-label">🔴 Kan ikke</div></div>
+        <div class="overview-summary-box hoppet"><div class="overview-summary-num">${counts['hoppet']}</div><div class="overview-summary-label">⊘ Hoppet</div></div>
+        <div class="overview-summary-box ikke-svart"><div class="overview-summary-num">${counts['ikke-svart']}</div><div class="overview-summary-label">⚪ Ikke svart</div></div>
+      `;
+
+      const groups = [
+        { status: 'kan-ikke', label: '🔴 Kan ikke' },
+        { status: 'hoppet', label: '⊘ Hoppet over' },
+        { status: 'kan', label: '🟢 Kan' },
+        { status: 'ikke-svart', label: '⚪ Ikke svart' }
+      ];
+
+      let html = '';
+      groups.forEach(g => {
+        const cards = allCards.filter(c => getStatus(c.id) === g.status);
+        html += `<div class="overview-group-title ${g.status}">${g.label} (${cards.length})</div>`;
+        if (cards.length === 0) {
+          html += `<div class="overview-empty">Ingen kort her.</div>`;
+        } else {
+          cards.forEach(c => {
+            const statusClass = g.status === 'ikke-svart' ? '' : g.status;
+            html += `
+              <div class="overview-card ${statusClass}">
+                <div class="overview-card-chapter">${c.chapter}</div>
+                <div class="overview-card-q">${c.q}</div>
+                <div class="overview-card-a">${c.a}</div>
+                <div class="overview-card-actions">
+                  <button class="overview-action-btn kan" onclick="changeCardStatus(${c.id}, 'kan')">🟢 Kan</button>
+                  <button class="overview-action-btn kan-ikke" onclick="changeCardStatus(${c.id}, 'kan-ikke')">🔴 Kan ikke</button>
+                  <button class="overview-action-btn hoppet" onclick="changeCardStatus(${c.id}, 'hoppet')">⊘ Hoppet</button>
+                  <button class="overview-action-btn clear" onclick="changeCardStatus(${c.id}, null)">↺ Nullstill</button>
+                </div>
+              </div>
+            `;
+          });
+        }
+      });
+      document.getElementById('overview-content').innerHTML = html;
+    }
+
+    function changeCardStatus(id, status) {
+      if (status === null) {
+        delete cardProgress[id];
+      } else {
+        cardProgress[id] = status;
+      }
+      saveProgress();
+      renderOverview();
+    }
+
+    function clearAllProgress() {
+      if (!confirm('Er du sikker? Dette fjerner all fremgang på alle kort.')) return;
+      cardProgress = {};
+      saveProgress();
+      renderOverview();
     }
 
     document.addEventListener('keydown', (e) => {
@@ -759,21 +1020,30 @@
       const quizScreen = document.getElementById('quiz-screen');
       const quizResultScreen = document.getElementById('quiz-result-screen');
       const chapters = document.getElementById('chapters');
+      const statusFilter = document.getElementById('status-filter');
+      const overviewBtn = document.getElementById('overview-btn');
+      const overviewScreen = document.getElementById('overview-screen');
       const progressBar = document.querySelector('.progress-bar');
       const statsDiv = document.querySelector('.stats');
 
       if (mode === 'flashcard') {
         gameScreen.classList.remove('hidden');
         chapters.classList.remove('hidden');
+        statusFilter.classList.remove('hidden');
+        overviewBtn.classList.remove('hidden');
         progressBar.classList.remove('hidden');
         statsDiv.classList.remove('hidden');
         quizScreen.classList.add('hidden');
         quizResultScreen.classList.add('hidden');
         finishScreen.classList.add('hidden');
+        overviewScreen.classList.add('hidden');
       } else {
         gameScreen.classList.add('hidden');
         finishScreen.classList.add('hidden');
         chapters.classList.add('hidden');
+        statusFilter.classList.add('hidden');
+        overviewBtn.classList.add('hidden');
+        overviewScreen.classList.add('hidden');
         progressBar.classList.add('hidden');
         statsDiv.classList.add('hidden');
         quizResultScreen.classList.add('hidden');
