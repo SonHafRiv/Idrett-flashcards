@@ -198,6 +198,172 @@
       text-transform: uppercase;
     }
 
+    .mode-switcher {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .mode-btn {
+      padding: 10px 24px;
+      border: 2px solid #333;
+      background: transparent;
+      color: #e0e0e0;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .mode-btn:hover { border-color: #61dafb; }
+    .mode-btn.active {
+      background: linear-gradient(135deg, #61dafb, #39ff14);
+      color: #0f0f1e;
+      border-color: transparent;
+    }
+
+    .quiz-question-box {
+      background: linear-gradient(135deg, #2d2d3d, #1a1a2e);
+      border: 2px solid #61dafb;
+      border-radius: 12px;
+      padding: 28px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 32px rgba(97, 218, 251, 0.15);
+    }
+    .quiz-q-label {
+      font-size: 11px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .quiz-q-text {
+      font-size: 20px;
+      font-weight: 500;
+      color: #39ff14;
+      line-height: 1.4;
+    }
+    .quiz-textarea {
+      width: 100%;
+      min-height: 120px;
+      background: #1a1a2e;
+      border: 2px solid #333;
+      border-radius: 8px;
+      padding: 16px;
+      color: #e0e0e0;
+      font-size: 15px;
+      font-family: inherit;
+      resize: vertical;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+    .quiz-textarea:focus {
+      outline: none;
+      border-color: #61dafb;
+    }
+    .quiz-reveal {
+      background: #2d2d3d;
+      border-left: 4px solid #39ff14;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .quiz-reveal-label {
+      font-size: 11px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+    .quiz-reveal-text { font-size: 15px; line-height: 1.6; color: #e0e0e0; }
+    .quiz-reveal-text strong { color: #61dafb; }
+    .quiz-user-answer {
+      background: #1a1a2e;
+      border-left: 4px solid #888;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      font-size: 14px;
+      color: #ccc;
+      white-space: pre-wrap;
+      font-style: italic;
+    }
+    .quiz-grade-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .btn-grade {
+      padding: 14px 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-grade-full {
+      background: linear-gradient(135deg, #39ff14, #32cd32);
+      color: #0f0f1e;
+    }
+    .btn-grade-half {
+      background: linear-gradient(135deg, #ffc107, #ff9800);
+      color: #0f0f1e;
+    }
+    .btn-grade-zero {
+      background: linear-gradient(135deg, #ff4757, #ff6b6b);
+      color: white;
+    }
+    .btn-grade:hover { transform: translateY(-2px); }
+
+    .quiz-score-big {
+      font-size: 64px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #61dafb, #39ff14);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-align: center;
+      margin: 16px 0 8px;
+    }
+    .quiz-score-total {
+      text-align: center;
+      font-size: 18px;
+      color: #888;
+      margin-bottom: 32px;
+    }
+    .quiz-review {
+      text-align: left;
+      max-width: 700px;
+      margin: 0 auto 24px;
+    }
+    .quiz-review-item {
+      background: #2d2d3d;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      border-left: 4px solid #39ff14;
+    }
+    .quiz-review-item.half { border-left-color: #ffc107; }
+    .quiz-review-item.zero { border-left-color: #ff4757; }
+    .quiz-review-q {
+      font-weight: 600;
+      color: #61dafb;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    .quiz-review-a { font-size: 13px; color: #ccc; line-height: 1.5; }
+    .quiz-review-a strong { color: #61dafb; }
+    .quiz-review-user {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px dashed #444;
+      font-size: 13px;
+      color: #999;
+      font-style: italic;
+    }
+
     .hidden { display: none !important; }
 
     @media (max-width: 768px) {
@@ -224,6 +390,11 @@
       </div>
     </header>
 
+    <div class="mode-switcher">
+      <button class="mode-btn active" id="mode-flashcard" onclick="switchMode('flashcard')">🎴 Flashkort</button>
+      <button class="mode-btn" id="mode-quiz" onclick="switchMode('quiz')">📝 Prøve (12 spm)</button>
+    </div>
+
     <div class="chapter-filter" id="chapters"></div>
 
     <div id="game-screen">
@@ -242,6 +413,42 @@
         <button class="btn-skip" onclick="skipCard()">⊘ Hopp over</button>
         <button class="btn-yes" onclick="markCorrect()">✓ Kan det (E)</button>
       </div>
+    </div>
+
+    <div id="quiz-screen" class="hidden">
+      <div class="quiz-question-box">
+        <div class="quiz-q-label" id="quiz-label">SPØRSMÅL 1 / 12 · VERDIGRUNNLAG</div>
+        <div class="quiz-q-text" id="quiz-q-text">Spørsmål?</div>
+      </div>
+
+      <textarea class="quiz-textarea" id="quiz-textarea" placeholder="Skriv svaret ditt her..."></textarea>
+
+      <div class="controls" id="quiz-controls-pre">
+        <button class="btn-yes" onclick="revealAnswer()">Vis fasit</button>
+      </div>
+
+      <div id="quiz-reveal-area" class="hidden">
+        <div class="quiz-user-answer" id="quiz-user-answer-display"></div>
+        <div class="quiz-reveal">
+          <div class="quiz-reveal-label">Fasit</div>
+          <div class="quiz-reveal-text" id="quiz-reveal-text"></div>
+        </div>
+        <div style="text-align:center; color:#888; font-size:13px; margin-bottom:8px;">Hvor nært var svaret ditt?</div>
+        <div class="quiz-grade-buttons">
+          <button class="btn-grade btn-grade-zero" onclick="gradeAnswer(0)">✗ Feil (0p)</button>
+          <button class="btn-grade btn-grade-half" onclick="gradeAnswer(0.5)">🟡 Delvis (½p)</button>
+          <button class="btn-grade btn-grade-full" onclick="gradeAnswer(1)">✓ Rett (1p)</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="quiz-result-screen" class="finish-screen hidden">
+      <h2>📝 Prøve ferdig!</h2>
+      <div class="quiz-score-big" id="quiz-final-score">0</div>
+      <div class="quiz-score-total">av 12 poeng</div>
+      <div class="quiz-review" id="quiz-review-list"></div>
+      <button class="btn-yes" onclick="startQuiz()" style="margin-right: 12px;">Ny prøve</button>
+      <button class="btn-skip" onclick="switchMode('flashcard')">Tilbake til flashkort</button>
     </div>
 
     <div id="finish-screen" class="finish-screen hidden">
@@ -526,12 +733,147 @@
     }
 
     document.addEventListener('keydown', (e) => {
+      if (currentMode !== 'flashcard') return;
       if (e.code === 'Space') { e.preventDefault(); flipCard(); }
       if (e.key === 'q' || e.key === 'Q') markWrong();
       if (e.key === 'e' || e.key === 'E') markCorrect();
       if (e.key === 'ArrowLeft') skipCard();
       if (e.key === 'ArrowRight') skipCard();
     });
+
+    // ===== PRØVE / QUIZ MODE =====
+    let currentMode = 'flashcard';
+    let quizQuestions = [];
+    let quizIndex = 0;
+    let quizScore = 0;
+    let quizAnswers = []; // { card, userAnswer, score }
+
+    function switchMode(mode) {
+      currentMode = mode;
+      document.getElementById('mode-flashcard').classList.toggle('active', mode === 'flashcard');
+      document.getElementById('mode-quiz').classList.toggle('active', mode === 'quiz');
+
+      const gameScreen = document.getElementById('game-screen');
+      const finishScreen = document.getElementById('finish-screen');
+      const quizScreen = document.getElementById('quiz-screen');
+      const quizResultScreen = document.getElementById('quiz-result-screen');
+      const chapters = document.getElementById('chapters');
+      const progressBar = document.querySelector('.progress-bar');
+      const statsDiv = document.querySelector('.stats');
+
+      if (mode === 'flashcard') {
+        gameScreen.classList.remove('hidden');
+        chapters.classList.remove('hidden');
+        progressBar.classList.remove('hidden');
+        statsDiv.classList.remove('hidden');
+        quizScreen.classList.add('hidden');
+        quizResultScreen.classList.add('hidden');
+        finishScreen.classList.add('hidden');
+      } else {
+        gameScreen.classList.add('hidden');
+        finishScreen.classList.add('hidden');
+        chapters.classList.add('hidden');
+        progressBar.classList.add('hidden');
+        statsDiv.classList.add('hidden');
+        quizResultScreen.classList.add('hidden');
+        startQuiz();
+      }
+    }
+
+    function startQuiz() {
+      // Sample 12 questions spread across all 11 chapters:
+      // pick 1 from each chapter = 11, then 1 extra random
+      const chapters = [...new Set(allCards.map(c => c.chapter))];
+      const picked = [];
+      const usedIds = new Set();
+
+      chapters.forEach(ch => {
+        const pool = allCards.filter(c => c.chapter === ch);
+        const pick = pool[Math.floor(Math.random() * pool.length)];
+        picked.push(pick);
+        usedIds.add(pick.id);
+      });
+
+      // Add 1 more random from anywhere (not already picked)
+      const remaining = allCards.filter(c => !usedIds.has(c.id));
+      if (remaining.length > 0) {
+        picked.push(remaining[Math.floor(Math.random() * remaining.length)]);
+      }
+
+      // Shuffle final order
+      for (let i = picked.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [picked[i], picked[j]] = [picked[j], picked[i]];
+      }
+
+      quizQuestions = picked;
+      quizIndex = 0;
+      quizScore = 0;
+      quizAnswers = [];
+
+      document.getElementById('quiz-screen').classList.remove('hidden');
+      document.getElementById('quiz-result-screen').classList.add('hidden');
+      showQuizQuestion();
+    }
+
+    function showQuizQuestion() {
+      const card = quizQuestions[quizIndex];
+      document.getElementById('quiz-label').textContent =
+        `SPØRSMÅL ${quizIndex + 1} / ${quizQuestions.length} · ${card.chapter.toUpperCase()}`;
+      document.getElementById('quiz-q-text').textContent = card.q;
+      document.getElementById('quiz-textarea').value = '';
+      document.getElementById('quiz-textarea').disabled = false;
+      document.getElementById('quiz-reveal-area').classList.add('hidden');
+      document.getElementById('quiz-controls-pre').classList.remove('hidden');
+      document.getElementById('quiz-textarea').focus();
+    }
+
+    function revealAnswer() {
+      const card = quizQuestions[quizIndex];
+      const userAnswer = document.getElementById('quiz-textarea').value.trim();
+      document.getElementById('quiz-user-answer-display').textContent =
+        userAnswer || '(tomt svar)';
+      document.getElementById('quiz-reveal-text').innerHTML = card.a;
+      document.getElementById('quiz-textarea').disabled = true;
+      document.getElementById('quiz-controls-pre').classList.add('hidden');
+      document.getElementById('quiz-reveal-area').classList.remove('hidden');
+    }
+
+    function gradeAnswer(score) {
+      const card = quizQuestions[quizIndex];
+      const userAnswer = document.getElementById('quiz-textarea').value.trim();
+      quizAnswers.push({ card, userAnswer, score });
+      quizScore += score;
+      quizIndex++;
+
+      if (quizIndex >= quizQuestions.length) {
+        finishQuiz();
+      } else {
+        showQuizQuestion();
+      }
+    }
+
+    function finishQuiz() {
+      document.getElementById('quiz-screen').classList.add('hidden');
+      document.getElementById('quiz-result-screen').classList.remove('hidden');
+      document.getElementById('quiz-final-score').textContent =
+        quizScore % 1 === 0 ? quizScore : quizScore.toFixed(1);
+
+      const reviewList = document.getElementById('quiz-review-list');
+      reviewList.innerHTML = '';
+      quizAnswers.forEach((item, i) => {
+        const div = document.createElement('div');
+        div.className = 'quiz-review-item' +
+          (item.score === 0.5 ? ' half' : item.score === 0 ? ' zero' : '');
+        const icon = item.score === 1 ? '✓' : item.score === 0.5 ? '🟡' : '✗';
+        div.innerHTML = `
+          <div class="quiz-review-q">${icon} ${i + 1}. ${item.card.q}</div>
+          <div class="quiz-review-a">${item.card.a}</div>
+          ${item.userAnswer ? `<div class="quiz-review-user">Ditt svar: ${item.userAnswer}</div>` : ''}
+        `;
+        reviewList.appendChild(div);
+      });
+    }
 
     init();
   </script>
